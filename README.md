@@ -1,6 +1,4 @@
-# homecoming_timer
-
-##Homecoming Timecard Software                                      
+#Homecoming Timecard Software                                      
                                                                       
                               Author: Sam McAnelly                    
                             Language: C++                             

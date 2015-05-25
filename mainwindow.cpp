@@ -159,13 +159,7 @@ void MainWindow::on_btn_refresh_clicked()
 }
 void MainWindow::on_btn_tsting_clicked()
 {
-    controller->set_gender(DB_Controller::GUYS);
-    controller->load_data();
 
-    fill_name_list();
-    fill_status_list();
-    fill_hours_complete_list();
-    fill_hours_required_list();
 }
 
 //Syncing the QListViewWidgets

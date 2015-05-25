@@ -18,6 +18,7 @@ public:
     ~MainWindow();
 
     void refresh_student_lists();
+    void clear_student_lists();
 
 private slots:
     void fill_name_list();

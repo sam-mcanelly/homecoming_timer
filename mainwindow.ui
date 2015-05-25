@@ -61,6 +61,14 @@
     </item>
     <item row="1" column="14">
      <widget class="QComboBox" name="combo_db_selection">
+      <property name="currentText">
+       <string>(none)</string>
+      </property>
+      <item>
+       <property name="text">
+        <string>(none)</string>
+       </property>
+      </item>
       <item>
        <property name="text">
         <string>guys</string>

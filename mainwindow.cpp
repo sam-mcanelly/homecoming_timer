@@ -34,6 +34,14 @@
  *          MAINWINDOW FUNCTION DEFS
  * -----------------------------------------------*/
 
+void MainWindow::clear_student_lists()
+{
+    ui->list_name->clear();
+    ui->list_status->clear();
+    ui->list_hrs->clear();
+    ui->list_req->clear();
+}
+
 void MainWindow::refresh_student_lists()
 {
     fill_name_list();
@@ -241,9 +249,12 @@ void MainWindow::on_combo_db_selection_currentIndexChanged(int index)
     switch(index)
     {
     case 0:
+        clear_student_lists();
+        return;
+    case 1:
         controller->set_gender(DB_Controller::GUYS);
         break;
-    case 1:
+    case 2:
         controller->set_gender(DB_Controller::GIRLS);
         break;
     }

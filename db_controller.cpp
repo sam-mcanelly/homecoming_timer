@@ -1,6 +1,21 @@
 #include "db_controller.h"
 #include "student.h"
 #include <QDir>
+
+/*----------------------------------------------
+ *
+ *   ===========db_controller.cpp==========
+ *
+ *
+ * Function definitions for the db_controller
+ * class.
+ *
+ * Author: Sam McAnelly
+ * Last Revised: 5/21/2015
+ *
+ *
+ * ---------------------------------------------*/
+
 /*------------------------------------------------
  *          PUBLIC FUNCTION DEFINITIONS
  * -----------------------------------------------*/

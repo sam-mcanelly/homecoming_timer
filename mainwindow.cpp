@@ -21,6 +21,21 @@
 #include <QScrollBar>
 
 /*----------------------------------------------
+ *
+ *      ===========mainwindow.cpp==========
+ *
+ *
+ * Function definitions for the mainwindow class.
+ * These handle all ui events and control what the
+ * user sees on the screen
+ *
+ * Author: Sam McAnelly
+ * Last Revised: 5/21/2015
+ *
+ *
+ * ---------------------------------------------*/
+
+/*----------------------------------------------
  *          DEFINITIONS AND ENUMS
  * --------------------------------------------*/
 

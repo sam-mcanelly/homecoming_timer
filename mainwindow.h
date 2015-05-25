@@ -5,6 +5,21 @@
 #include "student.h"
 #include "db_controller.h"
 
+/*----------------------------------------------
+ *
+ *      ===========mainwindow.h==========
+ *
+ *
+ * MainWindow class that contains all of the
+ * necessary function definitions for handling
+ * events that occur on the main window.
+ *
+ * Author: Sam McAnelly
+ * Last Revised: 5/21/2015
+ *
+ *
+ * ---------------------------------------------*/
+
 namespace Ui {
 class MainWindow;
 }

@@ -52,6 +52,7 @@ private slots:
 
     void on_combo_db_selection_currentIndexChanged(int index);
 
+    void on_btn_add_clicked();
 private:
     //Database Controller
     DB_Controller *controller;

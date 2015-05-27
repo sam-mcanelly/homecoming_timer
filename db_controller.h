@@ -6,10 +6,11 @@
 #include "student.h"
 #include <fstream>
 #include <iostream>
+#include <QDir>
 
 /*----------------------------------------------
  *
- *      ===========db_controller==========
+ *      ===========db_controller.h==========
  *
  *
  * contains the functions needed for loading,
@@ -22,7 +23,8 @@
  *
  * ---------------------------------------------*/
 
-class DB_Controller{
+class DB_Controller
+{
 public:
     enum database
     {

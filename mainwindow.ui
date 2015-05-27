@@ -59,6 +59,13 @@
       </property>
      </widget>
     </item>
+    <item row="8" column="2">
+     <widget class="QPushButton" name="btn_sort">
+      <property name="text">
+       <string>Sort</string>
+      </property>
+     </widget>
+    </item>
     <item row="4" column="6" rowspan="2" colspan="3">
      <widget class="QComboBox" name="comboBox_2">
       <item>
@@ -112,13 +119,6 @@
      <widget class="Line" name="line_2">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="5" colspan="3">
-     <widget class="QListWidget" name="list_hrs">
-      <property name="enabled">
-       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -203,18 +203,47 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="2">
-     <widget class="QLabel" name="lbl_CWID_3">
-      <property name="text">
-       <string>Name</string>
-      </property>
+    <item row="8" column="0">
+     <widget class="QComboBox" name="combo_sort_by">
+      <item>
+       <property name="text">
+        <string>Last Name (Descending)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Last Name (Ascending)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>First Name (Ascending)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>First Name (Descending)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Hours Complete</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Status</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Hours Required</string>
+       </property>
+      </item>
      </widget>
     </item>
     <item row="1" column="0" colspan="3">
      <widget class="QLineEdit" name="txt_cwid_name"/>
-    </item>
-    <item row="5" column="2" colspan="3">
-     <widget class="QLineEdit" name="txt_cwid_3"/>
     </item>
     <item row="7" column="4">
      <widget class="Line" name="line_3">
@@ -227,6 +256,13 @@
      <widget class="QLabel" name="lbl_CWID_2">
       <property name="text">
        <string>Card Number</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="5" colspan="4">
+     <widget class="QListWidget" name="list_hrs">
+      <property name="enabled">
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -279,15 +315,8 @@
       </property>
      </widget>
     </item>
-    <item row="7" column="9">
-     <widget class="Line" name="line_4">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-     </widget>
-    </item>
     <item row="5" column="0" colspan="2">
-     <widget class="QLineEdit" name="txt_cwid_2"/>
+     <widget class="QLineEdit" name="txt_add_card"/>
     </item>
     <item row="3" column="5">
      <widget class="QLabel" name="lbl_CWID_4">
@@ -310,40 +339,21 @@
       </property>
      </widget>
     </item>
-    <item row="8" column="2">
-     <widget class="QPushButton" name="btn_sort">
-      <property name="text">
-       <string>Sort</string>
+    <item row="7" column="9">
+     <widget class="Line" name="line_4">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
       </property>
      </widget>
     </item>
-    <item row="8" column="0">
-     <widget class="QComboBox" name="combo_sort_by">
-      <item>
-       <property name="text">
-        <string>Name (Descending)</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Name(Ascending)</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Status</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Hours Complete</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Hours Required</string>
-       </property>
-      </item>
+    <item row="5" column="2" colspan="3">
+     <widget class="QLineEdit" name="txt_add_name"/>
+    </item>
+    <item row="3" column="2">
+     <widget class="QLabel" name="lbl_CWID_3">
+      <property name="text">
+       <string>Name</string>
+      </property>
      </widget>
     </item>
    </layout>

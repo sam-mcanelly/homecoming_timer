@@ -26,11 +26,15 @@ class Student
 {
 private:
     std::string     name;
+    char            *f_name;
+    char            *l_name;
     std::string     card_number;
     float           hours_required;
     float           hours_complete;
     bool            status;
     QTime           timer;
+
+    void compute_names();
 
 public:
     Student(std::string _name);
@@ -47,6 +51,8 @@ public:
     void increment_hours_complete(float addition);
 
     std::string get_name();
+    char * get_last_name();
+    char * get_first_name();
     void set_name(std::string new_name);
 
     std::string get_card_number();

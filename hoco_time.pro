@@ -15,10 +15,12 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     student.cpp \
-    db_controller.cpp
+    db_controller.cpp \
+    db_sort.cpp
 
 HEADERS  += mainwindow.h \
     student.h \
-    db_controller.h
+    db_controller.h \
+    db_sort.h
 
 FORMS    += mainwindow.ui

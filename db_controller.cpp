@@ -1,6 +1,4 @@
 #include "db_controller.h"
-#include "student.h"
-#include <QDir>
 
 /*----------------------------------------------
  *
@@ -53,6 +51,8 @@ DB_Controller::~DB_Controller()
      */
 
     save_student_data();
+
+    delete ptr_db_students;
 }
 
 void DB_Controller::load_data()
@@ -267,7 +267,7 @@ void DB_Controller::fill_float_array(database db)
 
 void DB_Controller::populate_student_information()
 {
-    student_names = new std::string[300];
+    student_names = new std::string[256000];
     fill_string_array(NAME);
 
     student_card_numbers = new std::string[student_count];

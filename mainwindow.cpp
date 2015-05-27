@@ -6,8 +6,6 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "student.h"
-#include "db_controller.h"
 
 /*      c++ library headers    */
 
@@ -270,4 +268,9 @@ void MainWindow::on_combo_db_selection_currentIndexChanged(int index)
 
     controller->load_data();
     refresh_student_lists();
+}
+
+void MainWindow::on_btn_add_clicked()
+{
+
 }

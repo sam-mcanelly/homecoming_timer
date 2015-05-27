@@ -13,9 +13,41 @@
  *
  * ---------------------------------------------*/
 
+void Student::compute_names()
+{
+    const char * temp = name.c_str();
+    int count = 0;
+    int start_of_l_name;
+    while (*temp != ' ')
+    {
+        count++;
+        temp++;
+    }
+
+    f_name = new char[count];
+    std::strncpy(f_name, name.c_str(), count);
+
+    temp++;
+    start_of_l_name = count + 1;
+    count = 0;
+
+    while (count < name.length())
+    {
+        count++;
+        temp++;
+    }
+
+    l_name = new char[++count];
+    memcpy(l_name, &name[start_of_l_name], count);
+    l_name[count] = '\0';
+ }
+
 Student::Student(std::string _name)
 {
     name = _name;
+
+    //storing the first name and last name for sorting purposes
+    compute_names();
 
     //set to "clocked out" by default
     status = false;
@@ -70,9 +102,20 @@ std::string Student::get_name()
     return name;
 }
 
+char * Student::get_first_name()
+{
+    return f_name;
+}
+
+char * Student::get_last_name()
+{
+    return l_name;
+}
+
 void Student::set_name(std::string new_name)
 {
     name = new_name;
+    compute_names();
 }
 
 std::string Student::get_card_number()

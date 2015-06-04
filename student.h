@@ -37,29 +37,33 @@ private:
     void compute_names();
 
 public:
+    Student();
     Student(std::string _name);
+    Student& operator=(const Student &old_stud);
 
-    float get_hours_required();
+    float get_hours_required() const;
     void set_hours_required(float new_hours_complete);
 
-    bool get_status();
+    bool get_status() const;
     void set_status(bool new_status);
     void toggle_status();
 
-    float get_hours_complete();
+    float get_hours_complete() const;
     void set_hours_complete(float hrs);
     void increment_hours_complete(float addition);
 
-    std::string get_name();
-    char * get_last_name();
-    char * get_first_name();
+    std::string get_name() const;
+    const char * get_last_name() const;
+    const char * get_first_name() const;
     void set_name(std::string new_name);
 
-    std::string get_card_number();
+    std::string get_card_number() const;
     void set_card_number(std::string new_card_number);
 
     void clock_in();
     void clock_out();
+
+    void output_debug_info();
 
 };
 

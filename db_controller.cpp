@@ -124,6 +124,25 @@ int DB_Controller::search_card_number(std::string number)
     return -1;
 }
 
+void DB_Controller::sort(DB_Sort::sort_by sortby)
+{
+    switch (sortby)
+    {
+    case DB_Sort::F_NAME:
+        break;
+    case DB_Sort::L_NAME:
+        break;
+    case DB_Sort::STATUS:
+        break;
+    case DB_Sort::TIME_COMPLETE:
+        break;
+    case DB_Sort::TIME_REQUIRED:
+        DB_Sort::sort(ptr_db_students, student_count, DB_Sort::TIME_REQUIRED);
+        break;
+    default:
+        return;
+    }
+}
 
 /*------------------------------------------------
  *          PRIVATE FUNCTION DEFINITIONS

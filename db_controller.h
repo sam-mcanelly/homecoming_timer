@@ -4,6 +4,7 @@
 #define HOCO_DB "/hoco_db"
 
 #include "student.h"
+#include "db_sort.h"
 #include <fstream>
 #include <iostream>
 #include <QDir>
@@ -71,6 +72,8 @@ public:
 
     int search_name(std::string name);
     int search_card_number(std::string number);
+
+    void sort(DB_Sort::sort_by sortby);
 
 private:
     int student_count;

@@ -172,7 +172,8 @@ void MainWindow::on_btn_refresh_clicked()
 }
 void MainWindow::on_btn_tsting_clicked()
 {
-
+    controller->sort(DB_Sort::TIME_REQUIRED);
+    refresh_student_lists();
 }
 
 //Syncing the QListViewWidgets

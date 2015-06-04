@@ -13,6 +13,61 @@
  *
  * ---------------------------------------------*/
 
+Student::Student()
+{
+
+}
+
+Student::Student(std::string _name)
+{
+    name = _name;
+
+    //storing the first name and last name for sorting purposes
+    compute_names();
+
+    //set to "clocked out" by default
+    status = false;
+}
+
+Student& Student::operator =(const Student &old_stud)
+{
+    qDebug(name.c_str());
+    this->name = old_stud.get_name();
+    qDebug("Changed to...");
+    qDebug(name.c_str());
+    this->card_number = old_stud.get_card_number();
+    this->hours_complete = old_stud.get_hours_complete();
+    this->hours_required = old_stud.get_hours_required();
+    this->status = old_stud.get_status();
+
+    //ADD CODE TO GET TIME CLOCKED IN
+
+    //Copy over first name
+    int i = 0;
+    const char *name = old_stud.get_first_name();
+    int j = std::strlen(name);
+    f_name = new char[j];
+
+    while (i < j)
+    {
+        f_name[i] = name[i];
+        ++i;
+    }
+
+    //Copy over last name
+    name = old_stud.get_last_name();
+    j = std::strlen(name);
+    l_name = new char[j];
+
+    while (i < j)
+    {
+        l_name[i] = name[i];
+        ++i;
+    }
+
+    return *this;
+}
+
 void Student::compute_names()
 {
     const char * temp = name.c_str();
@@ -42,18 +97,7 @@ void Student::compute_names()
     l_name[count] = '\0';
  }
 
-Student::Student(std::string _name)
-{
-    name = _name;
-
-    //storing the first name and last name for sorting purposes
-    compute_names();
-
-    //set to "clocked out" by default
-    status = false;
-}
-
-float Student::get_hours_required()
+float Student::get_hours_required() const
 {
     return hours_required;
 }
@@ -63,7 +107,7 @@ void Student::set_hours_required(float hrs)
     hours_required = hrs;
 }
 
-bool Student::get_status()
+bool Student::get_status() const
 {
     return status;
 }
@@ -82,7 +126,7 @@ void Student::toggle_status()
         clock_in();
 }
 
-float Student::get_hours_complete()
+float Student::get_hours_complete() const
 {
     return hours_complete;
 }
@@ -97,19 +141,21 @@ void Student::increment_hours_complete(float addition)
     hours_complete += addition;
 }
 
-std::string Student::get_name()
+std::string Student::get_name() const
 {
     return name;
 }
 
-char * Student::get_first_name()
+const char * Student::get_first_name() const
 {
-    return f_name;
+    const char *temp = f_name;
+    return temp;
 }
 
-char * Student::get_last_name()
+const char * Student::get_last_name() const
 {
-    return l_name;
+    const char *temp = l_name;
+    return temp;
 }
 
 void Student::set_name(std::string new_name)
@@ -118,7 +164,7 @@ void Student::set_name(std::string new_name)
     compute_names();
 }
 
-std::string Student::get_card_number()
+std::string Student::get_card_number() const
 {
     return card_number;
 }
@@ -147,4 +193,19 @@ void Student::clock_out()
     increment_hours_complete(time_done);
 }
 
+void Student::output_debug_info()
+{
+    qDebug("+=========================+");
+    qDebug("+      Student Info       +");
+    qDebug("+=========================+");
+    qDebug("student name: %s", name.c_str());
+    qDebug("student card number: %s", card_number.c_str());
+    qDebug("student status: %s", status ? "true" : "false");
+    qDebug("student required hours: %f", hours_required);
+    qDebug("student complete hours: %f", hours_complete);
+    qDebug("+=========================+");
+    qDebug("");
+
+
+}
 

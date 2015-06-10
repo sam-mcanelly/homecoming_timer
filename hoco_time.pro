@@ -16,11 +16,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     student.cpp \
     db_controller.cpp \
-    db_sort.cpp
+    db_sort.cpp \
+    setup_wizard.cpp
 
 HEADERS  += mainwindow.h \
     student.h \
     db_controller.h \
-    db_sort.h
+    db_sort.h \
+    setup_wizard.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    setup_wizard.ui

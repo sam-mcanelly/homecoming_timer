@@ -14,14 +14,15 @@
  *
  * ---------------------------------------------*/
 
+/*----------------------------------------------
+ *          LITERAL CONSTANTS
+ * -------------------------------------------*/
+
+#define FORMATTING_LINES        35
+
 /*------------------------------------------------
  *          PUBLIC FUNCTION DEFINITIONS
  * -----------------------------------------------*/
-
-DB_Controller::DB_Controller(db_gender gen, Student **student_array)
-{
-    initialize_db_controller(gen, student_array);
-}
 
 DB_Controller::DB_Controller()
 {
@@ -30,55 +31,45 @@ DB_Controller::DB_Controller()
 
 DB_Controller::~DB_Controller()
 {
-
-    /* IS THIS NEEDED???? */
-    /*
-    if(daily_report != NULL)
-        delete daily_report;
-    if(weekly_report != NULL)
-        delete weekly_report;
-    if(settings != NULL)
-        delete settings;
-
-    if(student_names != NULL)
-        delete student_names;
-    if(student_card_numbers != NULL)
-        delete student_card_numbers;
-    if(student_req_hours != NULL)
-        delete student_req_hours;
-    if(student_cmplt_hours != NULL)
-        delete student_cmplt_hours;
-     */
-
     save_student_data();
 
-    delete ptr_db_students;
+    delete[] ptr_db_students_male;
+    delete[] ptr_db_students_female;
 }
 
-void DB_Controller::load_data()
+void DB_Controller::begin()
 {
-
-    initialize_db_controller(gender, ptr_db_students);
+    initialize_db_controller();
 }
 
-void DB_Controller::set_gender(db_gender gen)
+void DB_Controller::set_gender(db_gender gender)
 {
-    gender = gen;
+    switch(gender)
+    {
+    case GUYS:
+        active_db = ptr_db_students_male;
+        break;
+    case GIRLS:
+        active_db = ptr_db_students_female;
+        break;
+    default:
+        qDebug("Invalid database gender selection...");
+    }
 }
-
-void DB_Controller::set_student_array(Student **student_array)
-{
-    ptr_db_students = student_array;
-}
-
 
 int DB_Controller::get_student_count()
 {
-    return student_count;
+    if (active_db == ptr_db_students_male)
+        return male_student_count;
+    else
+        return female_student_count;
 }
 void DB_Controller::set_student_count(int count)
 {
-    student_count = count;
+    if (active_db == ptr_db_students_male)
+        male_student_count = count;
+    else
+        female_student_count = count;
 }
 
 void DB_Controller::generate_report(report_type type)
@@ -96,9 +87,15 @@ int DB_Controller::search_name(std::string name)
 
     std::string name_from_array;
 
-    for(int i = 0; i < student_count; i++)
+    int count;
+    if (active_db == ptr_db_students_male)
+        count = male_student_count;
+    else
+        count = female_student_count;
+
+    for(int i = 0; i < count; i++)
     {
-        name_from_array = ptr_db_students[i]->get_name();
+        name_from_array = active_db[i]->get_name();
         for (std::string::iterator i = name_from_array.begin(); i != name_from_array.end(); i++)
         {
             *i = tolower(*i);
@@ -113,10 +110,15 @@ int DB_Controller::search_name(std::string name)
 
 int DB_Controller::search_card_number(std::string number)
 {
+    int count;
+    if (active_db == ptr_db_students_male)
+        count = male_student_count;
+    else
+        count = female_student_count;
     std::string num_from_array;
-    for (int i = 0; i < student_count; i++)
+    for (int i = 0; i < count; i++)
     {
-        num_from_array = num_from_array = ptr_db_students[i]->get_card_number();
+        num_from_array = num_from_array = active_db[i]->get_card_number();
         if(number.compare(num_from_array) == 0)
             return i;
     }
@@ -124,8 +126,39 @@ int DB_Controller::search_card_number(std::string number)
     return -1;
 }
 
+std::string DB_Controller::get_name_from_index(int i)
+{
+    return active_db[i]->get_name();
+}
+
+std::string DB_Controller::get_card_num_from_index(int i)
+{
+    return active_db[i]->get_card_number();
+}
+
+float DB_Controller::get_hours_req_from_index(int i)
+{
+    return active_db[i]->get_hours_required();
+}
+
+float DB_Controller::get_hours_comp_from_index(int i)
+{
+    return active_db[i]->get_hours_complete();
+}
+
+bool DB_Controller::get_status_from_index(int i)
+{
+    return active_db[i]->get_status();
+}
+
+void DB_Controller::toggle_status_from_index(int i)
+{
+    active_db[i]->toggle_status();
+}
+
 void DB_Controller::sort(DB_Sort::sort_by sortby)
 {
+    int count;
     switch (sortby)
     {
     case DB_Sort::F_NAME:
@@ -137,7 +170,11 @@ void DB_Controller::sort(DB_Sort::sort_by sortby)
     case DB_Sort::TIME_COMPLETE:
         break;
     case DB_Sort::TIME_REQUIRED:
-        DB_Sort::sort(ptr_db_students, student_count, DB_Sort::TIME_REQUIRED);
+        if(active_db == ptr_db_students_male)
+            count = male_student_count;
+        else
+            count = female_student_count;
+        DB_Sort::sort(active_db, count, DB_Sort::TIME_REQUIRED);
         break;
     default:
         return;
@@ -148,9 +185,8 @@ void DB_Controller::sort(DB_Sort::sort_by sortby)
  *          PRIVATE FUNCTION DEFINITIONS
  * -----------------------------------------------*/
 
-void DB_Controller::initialize_db_controller(db_gender gen, Student **students)
+void DB_Controller::initialize_db_controller()
 {
-    gender = gen;
     fetch_settings();
     populate_student_information();
 }
@@ -227,7 +263,7 @@ void DB_Controller::compute_report_output(db_gender gender, report_type type)
 
 }
 
-void DB_Controller::fill_string_array(database db)
+void DB_Controller::fill_string_array(db_gender gender, database db)
 {
     std::ifstream reader;
 
@@ -251,9 +287,20 @@ void DB_Controller::fill_string_array(database db)
         ++i;
     }
     reader.close();
-    student_count = i;
+    if (db == NAME)
+    {
+        switch(gender)
+        {
+        case GUYS:
+            male_student_count = i;
+            break;
+        case GIRLS:
+            female_student_count = i;
+            break;
+        }
+    }
 }
-void DB_Controller::fill_float_array(database db)
+void DB_Controller::fill_float_array(db_gender gender, database db)
 {
     std::ifstream reader;
     const char* fname = compute_db(gender, db);
@@ -280,69 +327,163 @@ void DB_Controller::fill_float_array(database db)
         ++i;
     }
     reader.close();
-    student_count = i;
 }
 
 
 void DB_Controller::populate_student_information()
 {
     student_names = new std::string[256000];
-    fill_string_array(NAME);
+    fill_string_array(GUYS, NAME);
 
-    student_card_numbers = new std::string[student_count];
-    fill_string_array(CWID);
+    student_card_numbers = new std::string[male_student_count];
+    fill_string_array(GUYS, CWID);
 
-    student_req_hours = new float[student_count];
-    fill_float_array(TIME_REQUIRED);
+    student_req_hours = new float[male_student_count];
+    fill_float_array(GUYS, TIME_REQUIRED);
 
-    student_cmplt_hours = new float[student_count];
-    fill_float_array(TIME_COMPLETE);
+    student_cmplt_hours = new float[male_student_count];
+    fill_float_array(GUYS, TIME_COMPLETE);
 
-    DB_Controller::populate_student_names();
-    DB_Controller::populate_student_card_numbers();
-    DB_Controller::populate_student_required_hours();
-    DB_Controller::populate_student_completed_hours();
+    ptr_db_students_male = new Student*[male_student_count];
+    active_db = ptr_db_students_male;
+
+    DB_Controller::populate_student_names(GUYS);
+    DB_Controller::populate_student_card_numbers(GUYS);
+    DB_Controller::populate_student_required_hours(GUYS);
+    DB_Controller::populate_student_completed_hours(GUYS);
+
+    delete[] student_names;
+    delete[] student_card_numbers;
+    delete[] student_req_hours;
+    delete[] student_cmplt_hours;
+
+    student_names = new std::string[256000];
+    fill_string_array(GIRLS, NAME);
+
+    student_card_numbers = new std::string[female_student_count];
+    fill_string_array(GIRLS, CWID);
+
+    student_req_hours = new float[female_student_count];
+    fill_float_array(GIRLS, TIME_REQUIRED);
+
+    student_cmplt_hours = new float[female_student_count];
+    fill_float_array(GIRLS, TIME_COMPLETE);
+
+    ptr_db_students_female = new Student*[female_student_count];
+    active_db = ptr_db_students_female;
+
+    DB_Controller::populate_student_names(GIRLS);
+    DB_Controller::populate_student_card_numbers(GIRLS);
+    DB_Controller::populate_student_required_hours(GIRLS);
+    DB_Controller::populate_student_completed_hours(GIRLS);
+
+    delete[] student_names;
+    delete[] student_card_numbers;
+    delete[] student_req_hours;
+    delete[] student_cmplt_hours;
 }
 
 
-void DB_Controller::populate_student_names()
+void DB_Controller::populate_student_names(db_gender gender)
 {
-    ptr_db_students = new Student*[student_count];
-    for(int i = 0; i < student_count; i++)
+    int count;
+    switch(gender)
     {
-        ptr_db_students[i] = new Student(student_names[i]);
+    case GUYS:
+        count = male_student_count;
+        break;
+    case GIRLS:
+        count = female_student_count;
+        break;
+    }
+
+    for(int i = 0; i < count; i++)
+    {
+        active_db[i] = new Student(student_names[i]);
     }
 }
 
-void DB_Controller::populate_student_card_numbers()
+void DB_Controller::populate_student_card_numbers(db_gender gender)
 {
-    for(int i = 0; i < student_count; i++)
+    int count;
+    switch(gender)
     {
-        ptr_db_students[i]->set_card_number(student_card_numbers[i]);
+    case GUYS:
+        count = male_student_count;
+        break;
+    case GIRLS:
+        count = female_student_count;
+        break;
+    }
+    for(int i = 0; i < count; i++)
+    {
+        active_db[i]->set_card_number(student_card_numbers[i]);
     }
 }
 
-void DB_Controller::populate_student_required_hours()
+void DB_Controller::populate_student_required_hours(db_gender gender)
 {
-    for(int i = 0; i < student_count; i++)
+    int count;
+    switch(gender)
     {
-        ptr_db_students[i]->set_hours_required(student_req_hours[i]);
+    case GUYS:
+        count = male_student_count;
+        break;
+    case GIRLS:
+        count = female_student_count;
+        break;
+    }
+    for(int i = 0; i < count; i++)
+    {
+        active_db[i]->set_hours_required(student_req_hours[i]);
     }
 }
 
-void DB_Controller::populate_student_completed_hours()
+void DB_Controller::populate_student_completed_hours(db_gender gender)
 {
-    for(int i = 0; i < student_count; i++)
+    int count;
+    switch(gender)
     {
-        ptr_db_students[i]->set_hours_complete(student_cmplt_hours[i]);
+    case GUYS:
+        count = male_student_count;
+        break;
+    case GIRLS:
+        count = female_student_count;
+        break;
+    }
+    for(int i = 0; i < count; i++)
+    {
+        active_db[i]->set_hours_complete(student_cmplt_hours[i]);
     }
 }
 
+void DB_Controller::resize_db()
+{
+    int *count;
+    if( active_db == ptr_db_students_male)
+        count = &male_student_count;
+    else
+        count = &female_student_count;
+
+    Student **ptr_temp = new Student*[*count + 50];
+
+    for(int i = 0; i < *count; i++)
+    {
+        ptr_temp[i] = active_db[i];
+    }
+
+    active_db = ptr_temp;
+    *count += 50;
+}
 
 void DB_Controller::generate_daily_report()
 {
-    //The extra 35 holds the report formatting
-    daily_report = new std::string[student_count + 35];
+    int count;
+    if (active_db == ptr_db_students_male)
+        count = male_student_count;
+    else
+        count = female_student_count;
+    daily_report = new std::string[count + FORMATTING_LINES];
 }
 
 void DB_Controller::generate_weekly_report()

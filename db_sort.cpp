@@ -98,14 +98,26 @@ int DB_Sort::partition_by_hours_complete(Student **s_ptr, int low, int high)
 
     int i = low;                                //left scan index
     int j = high + 1;                           //right scan index
-    Student v = *s_ptr[low];                        //partitioning item
+    Student *v = s_ptr[low];                    //partitioning item
+    Student *temp;
 
     while (true)
     {
-        //Scan right, scan left, check for scan complete, and exchange
+        while(s_ptr[++i]->get_hours_complete() < v->get_hours_complete())
+            if (i == high)  break;
+        while(v->get_hours_complete() < s_ptr[--j]->get_hours_complete())
+            if ( j == low )   break;
+        if ( i >= j ) break;
 
-        //while((*s_ptr[++i]->get_name().c_str())[0])
+        temp = s_ptr[i];
+        s_ptr[i] = s_ptr[j];
+        s_ptr[j] = temp;
     }
+
+    s_ptr[low] = s_ptr[j];
+    s_ptr[j] = v;
+
+    return j;
 }
 
 int DB_Sort::partition_by_hours_required(Student **s_ptr, int low, int high)
@@ -115,32 +127,24 @@ int DB_Sort::partition_by_hours_required(Student **s_ptr, int low, int high)
 
     int i = low;                                //left scan index
     int j = high + 1;                           //right scan index
-    Student v = *s_ptr[low];                    //partitioning item
-    Student temp;
+    Student *v = s_ptr[low];                    //partitioning item
+    Student *temp;
 
     while (true)
     {
-        while((*s_ptr[++i]).get_hours_required() < v.get_hours_required())
+        while(s_ptr[++i]->get_hours_required() < v->get_hours_required())
             if (i == high)  break;
-        while(v.get_hours_required() < (*s_ptr[--j]).get_hours_required())
+        while(v->get_hours_required() < s_ptr[--j]->get_hours_required())
             if ( j == low )   break;
         if ( i >= j ) break;
 
-        qDebug("temp populated..");
-        temp = (*s_ptr[i]);
+        temp = s_ptr[i];
         s_ptr[i] = s_ptr[j];
-        *s_ptr[j] = temp;
-
-        //Debug info
-        qDebug("Swapped Students:");
-        s_ptr[i]->output_debug_info();
-        s_ptr[j]->output_debug_info();
-        qDebug("\n\n");
-
+        s_ptr[j] = temp;
     }
 
     s_ptr[low] = s_ptr[j];
-    *s_ptr[j] = v;
+    s_ptr[j] = v;
 
     return j;
 }

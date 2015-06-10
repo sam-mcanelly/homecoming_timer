@@ -8,8 +8,8 @@ class DB_Sort
 public:
     enum sort_by
     {
-        F_NAME,
         L_NAME,
+        F_NAME,
         TIME_COMPLETE,
         TIME_REQUIRED,
         STATUS

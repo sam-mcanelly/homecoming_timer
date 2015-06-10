@@ -207,22 +207,12 @@
      <widget class="QComboBox" name="combo_sort_by">
       <item>
        <property name="text">
-        <string>Last Name (Descending)</string>
+        <string>Last Name</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Last Name (Ascending)</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>First Name (Ascending)</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>First Name (Descending)</string>
+        <string>First Name</string>
        </property>
       </item>
       <item>
@@ -232,12 +222,12 @@
       </item>
       <item>
        <property name="text">
-        <string>Status</string>
+        <string>Hours Required</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Hours Required</string>
+        <string>Status</string>
        </property>
       </item>
      </widget>

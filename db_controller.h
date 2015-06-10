@@ -54,16 +54,16 @@ public:
         WEEKLY
     };
 
-    Student **ptr_db_students;
-
-    DB_Controller(db_gender gen, Student **student_array);
     DB_Controller();
     ~DB_Controller();
 
+    void begin();
+
     void load_data();
 
-    void set_gender(db_gender gen);
-    void set_student_array(Student **student_array);
+    void add_student(std::string name, std::string card_num, float hours_req, bool weekly);
+
+    void set_gender(db_gender gender);
 
     int get_student_count();
     void set_student_count(int count);
@@ -73,12 +73,29 @@ public:
     int search_name(std::string name);
     int search_card_number(std::string number);
 
+    std::string get_name_from_index(int i);
+    std::string get_card_num_from_index(int i);
+    float get_hours_req_from_index(int i);
+    float get_hours_comp_from_index(int i);
+    bool  get_status_from_index(int i);
+    void  toggle_status_from_index(int i);
+
     void sort(DB_Sort::sort_by sortby);
 
 private:
-    int student_count;
+    Student **ptr_db_students_male;
+    Student **ptr_db_students_female;
+    Student **active_db;
+
+    int male_student_count;
+    int female_student_count;
+
+    int male_idx;
+    int female_idx;
+
     int current_week;
     int current_day;
+
     float fine_per_hour;
 
     db_gender gender;
@@ -93,7 +110,7 @@ private:
     float       *student_req_hours;
     float       *student_cmplt_hours;
 
-    void initialize_db_controller(db_gender gen, Student **students);
+    void initialize_db_controller();
     void save_student_data();
 
     void fetch_settings();
@@ -101,15 +118,17 @@ private:
     const char *compute_db(db_gender gender, database db);
     void compute_report_output(db_gender gender, report_type type);
 
-    void fill_string_array(database db);
-    void fill_float_array(database db);
+    void fill_string_array(db_gender gender, database db);
+    void fill_float_array(db_gender gender, database db);
 
     void populate_student_information();
 
-    void populate_student_names();
-    void populate_student_card_numbers();
-    void populate_student_required_hours();
-    void populate_student_completed_hours();
+    void populate_student_names(db_gender gender);
+    void populate_student_card_numbers(db_gender gender);
+    void populate_student_required_hours(db_gender gender);
+    void populate_student_completed_hours(db_gender gender);
+
+    void resize_db();
 
     void generate_daily_report();
     void generate_weekly_report();

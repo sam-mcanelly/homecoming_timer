@@ -74,7 +74,7 @@ void MainWindow::fill_name_list()
     QString curr_name;
     while (i < controller->get_student_count())
     {
-        curr_name = QString::fromStdString(controller->ptr_db_students[i]->get_name());
+        curr_name = QString::fromStdString(controller->get_name_from_index(i));
         QListWidgetItem *itm = new QListWidgetItem;
         itm->setText(curr_name);
         ui->list_name->insertItem(i, itm);
@@ -93,7 +93,7 @@ void MainWindow::fill_status_list()
 
     while(i < controller->get_student_count())
     {
-        status = controller->ptr_db_students[i]->get_status();
+        status = controller->get_status_from_index(i);
         QListWidgetItem *itm = new QListWidgetItem;
         if (status == false)
         {
@@ -119,7 +119,7 @@ void MainWindow::fill_hours_required_list()
 
     while (i < controller->get_student_count())
     {
-        float curr_time = controller->ptr_db_students[i]->get_hours_required();
+        float curr_time = controller->get_hours_req_from_index(i);
         QListWidgetItem *itm = new QListWidgetItem;
         final.sprintf("%05.2f", curr_time);
         itm->setText(final);
@@ -137,14 +137,7 @@ void MainWindow::fill_hours_complete_list()
 
     while (i < controller->get_student_count())
     {
-        curr_time = controller->ptr_db_students[i]->get_hours_complete();
-
-        //Code for testing
-        //std::ostringstream ss;
-        //ss << curr_time;
-        //std::string s(ss.str());
-        //qDebug(s.c_str());
-
+        curr_time = controller->get_hours_comp_from_index(i);
         QListWidgetItem *itm = new QListWidgetItem;
         final.sprintf("%05.2f", curr_time);
         itm->setText(final);
@@ -158,6 +151,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    init = false;
     controller = new DB_Controller();
 }
 
@@ -167,9 +161,6 @@ MainWindow::~MainWindow()
     delete controller;
 }
 
-void MainWindow::on_btn_refresh_clicked()
-{
-}
 void MainWindow::on_btn_tsting_clicked()
 {
     controller->sort(DB_Sort::TIME_REQUIRED);
@@ -225,9 +216,9 @@ void MainWindow::on_btn_clk_in_out_clicked()
     int index = ui->list_name->currentRow();
     if(name.compare("") == 0)
     {
-        controller->ptr_db_students[index]->toggle_status();
+        controller->toggle_status_from_index(index);
         fill_status_list();
-        if(!controller->ptr_db_students[index]->get_status())
+        if(!controller->get_status_from_index(index))
             fill_hours_complete_list();
         ui->list_name->setCurrentRow(index);
     }
@@ -244,7 +235,7 @@ void MainWindow::on_btn_clk_in_out_clicked()
         }
         else
         {
-            controller->ptr_db_students[index]->toggle_status();
+            controller->toggle_status_from_index(index);
             fill_status_list();
             fill_hours_complete_list();
             ui->list_name->setCurrentRow(index);
@@ -254,6 +245,11 @@ void MainWindow::on_btn_clk_in_out_clicked()
 
 void MainWindow::on_combo_db_selection_currentIndexChanged(int index)
 {
+    if(!init)
+    {
+       controller->begin();
+       init = true;
+    }
     switch(index)
     {
     case 0:
@@ -267,11 +263,15 @@ void MainWindow::on_combo_db_selection_currentIndexChanged(int index)
         break;
     }
 
-    controller->load_data();
     refresh_student_lists();
 }
 
 void MainWindow::on_btn_add_clicked()
 {
 
+}
+
+void MainWindow::on_btn_sort_clicked()
+{
+    controller->sort( (DB_Sort::sort_by)ui->combo_sort_by->currentIndex() );
 }

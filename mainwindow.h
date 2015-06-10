@@ -41,7 +41,6 @@ private slots:
     void fill_hours_required_list();
     void fill_hours_complete_list();
 
-    void on_btn_refresh_clicked();
     void on_btn_tsting_clicked();
 
     void on_list_name_currentRowChanged(int currentRow);
@@ -53,9 +52,12 @@ private slots:
     void on_combo_db_selection_currentIndexChanged(int index);
 
     void on_btn_add_clicked();
+    void on_btn_sort_clicked();
+
 private:
     //Database Controller
     DB_Controller *controller;
+    bool init;
 
     //current pomping week
     int curr_week;

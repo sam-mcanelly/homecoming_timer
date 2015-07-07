@@ -29,12 +29,21 @@ Student::Student(std::string _name)
     status = false;
 }
 
+Student::Student(std::string _name, std::string _card_num, float _hours_req)
+{
+    name             = _name;
+    card_number      = _card_num;
+    hours_required   = _hours_req;
+
+    compute_names();
+
+    status = false;
+
+}
+
 Student& Student::operator =(const Student &old_stud)
 {
-    qDebug(name.c_str());
     this->name = old_stud.get_name();
-    qDebug("Changed to...");
-    qDebug(name.c_str());
     this->card_number = old_stud.get_card_number();
     this->hours_complete = old_stud.get_hours_complete();
     this->hours_required = old_stud.get_hours_required();
@@ -79,11 +88,12 @@ void Student::compute_names()
         temp++;
     }
 
-    f_name = new char[count];
+    f_name = new char[++count];
     std::strncpy(f_name, name.c_str(), count);
+    f_name[count] = '\0';
 
     temp++;
-    start_of_l_name = count + 1;
+    start_of_l_name = count;
     count = 0;
 
     while (count < name.length())

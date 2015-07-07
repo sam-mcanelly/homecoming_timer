@@ -1,8 +1,6 @@
 #ifndef DB_CONTROLLER_H
 #define DB_CONTROLLER_H
 
-#define HOCO_DB "/hoco_db"
-
 #include "student.h"
 #include "db_sort.h"
 #include <fstream>
@@ -61,12 +59,11 @@ public:
 
     void load_data();
 
-    void add_student(std::string name, std::string card_num, float hours_req, bool weekly);
+    void add_student(std::string name, std::string card_num, float hours_req);
 
     void set_gender(db_gender gender);
 
     int get_student_count();
-    void set_student_count(int count);
 
     void generate_report(report_type type);
 
@@ -87,6 +84,9 @@ private:
     Student **ptr_db_students_female;
     Student **active_db;
 
+    int *active_count;
+    int *active_idx;
+
     int male_student_count;
     int female_student_count;
 
@@ -96,7 +96,12 @@ private:
     int current_week;
     int current_day;
 
-    float fine_per_hour;
+    std::string guy_db;
+    std::string girl_db;
+    std::string report_path;
+
+    float girl_fine;
+    float guy_fine;
 
     db_gender gender;
     db_type type;

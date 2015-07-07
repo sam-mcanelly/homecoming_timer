@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>897</width>
+    <width>1180</width>
     <height>676</height>
    </rect>
   </property>
@@ -17,112 +17,11 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Homecoming Time v0.03</string>
+   <string>Homecoming Time v0.21</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="14">
-     <widget class="QLabel" name="lbl_db_selection">
-      <property name="text">
-       <string>Database</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="9" colspan="4">
-     <widget class="QRadioButton" name="radioButton_2">
-      <property name="text">
-       <string>Permanently</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="13" rowspan="2" colspan="2">
-     <widget class="QPushButton" name="btn_add">
-      <property name="text">
-       <string>Add to Database</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="0">
-     <widget class="QListWidget" name="list_name"/>
-    </item>
-    <item row="3" column="9" rowspan="2" colspan="4">
-     <widget class="QRadioButton" name="radioButton">
-      <property name="text">
-       <string>This Week</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="7">
-     <widget class="QLabel" name="lbl_CWID_5">
-      <property name="text">
-       <string>Deductions</string>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="2">
-     <widget class="QPushButton" name="btn_sort">
-      <property name="text">
-       <string>Sort</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="6" rowspan="2" colspan="3">
-     <widget class="QComboBox" name="comboBox_2">
-      <item>
-       <property name="text">
-        <string>0</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>1</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>2</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>3</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>4</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>5</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>6</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>7</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>8</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item row="7" column="1">
-     <widget class="Line" name="line_2">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="14">
+    <item row="1" column="15">
      <widget class="QComboBox" name="combo_db_selection">
       <property name="currentText">
        <string>(none)</string>
@@ -144,10 +43,41 @@
       </item>
      </widget>
     </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="lbl_CWID">
+    <item row="8" column="2" colspan="2">
+     <widget class="QPushButton" name="btn_sort">
       <property name="text">
-       <string>Card Number / Name</string>
+       <string>Sort</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="3">
+     <widget class="QLineEdit" name="txt_cwid_name"/>
+    </item>
+    <item row="3" column="2">
+     <widget class="QLabel" name="lbl_CWID_3">
+      <property name="text">
+       <string>Name</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="5" colspan="4">
+     <widget class="QListWidget" name="list_hrs">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="10" colspan="5">
+     <widget class="QLabel" name="lbl_Hrs_Req">
+      <property name="text">
+       <string>Hours Required</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="10" colspan="6">
+     <widget class="QListWidget" name="list_req">
+      <property name="enabled">
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -158,18 +88,46 @@
       </property>
      </widget>
     </item>
-    <item row="8" column="12" colspan="3">
-     <widget class="QPushButton" name="btn_refresh_2">
-      <property name="text">
-       <string>Generate Report</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="5" rowspan="2">
-     <widget class="QComboBox" name="comboBox">
+    <item row="5" column="5" colspan="2">
+     <widget class="QComboBox" name="combo_hours_req">
+      <item>
+       <property name="text">
+        <string>4</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>4.5</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>5</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>5.5</string>
+       </property>
+      </item>
       <item>
        <property name="text">
         <string>6</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>6.5</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>7</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>7.5</string>
        </property>
       </item>
       <item>
@@ -179,12 +137,62 @@
       </item>
       <item>
        <property name="text">
+        <string>8.5</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>9</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>9.5</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
         <string>10</string>
        </property>
       </item>
       <item>
        <property name="text">
+        <string>10.5</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>11</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>11.5</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
         <string>12</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>12.5</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>13</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>13.5</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>14</string>
        </property>
       </item>
      </widget>
@@ -196,10 +204,97 @@
       </property>
      </widget>
     </item>
-    <item row="8" column="8" colspan="3">
-     <widget class="QCheckBox" name="checkBox">
+    <item row="7" column="0">
+     <widget class="QListWidget" name="list_name"/>
+    </item>
+    <item row="7" column="2" colspan="2">
+     <widget class="QListWidget" name="list_status">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="12">
+     <widget class="QCheckBox" name="checkBox_2">
       <property name="text">
-       <string>Day</string>
+       <string>Week</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="lbl_CWID">
+      <property name="text">
+       <string>Card Number / Name</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="9">
+     <widget class="Line" name="line_4">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="7" colspan="2">
+     <widget class="QPushButton" name="btn_add">
+      <property name="text">
+       <string>Add to Database</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="16">
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="5" colspan="4">
+     <widget class="QPushButton" name="btn_new_db">
+      <property name="text">
+       <string>New Timesheet</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="lbl_Name">
+      <property name="text">
+       <string>Name</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="3">
+     <widget class="QPushButton" name="btn_clk_in_out">
+      <property name="text">
+       <string>Clock In/Out</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="13" colspan="3">
+     <widget class="QPushButton" name="btn_refresh_2">
+      <property name="text">
+       <string>Generate Report</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="4">
+     <widget class="Line" name="line_3">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0" colspan="2">
+     <widget class="QLineEdit" name="txt_add_card">
+      <property name="echoMode">
+       <enum>QLineEdit::Password</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="2">
+     <widget class="QLabel" name="lbl_Status">
+      <property name="text">
+       <string>Status</string>
       </property>
      </widget>
     </item>
@@ -232,15 +327,22 @@
       </item>
      </widget>
     </item>
-    <item row="1" column="0" colspan="3">
-     <widget class="QLineEdit" name="txt_cwid_name"/>
-    </item>
-    <item row="7" column="4">
-     <widget class="Line" name="line_3">
+    <item row="7" column="1">
+     <widget class="Line" name="line_2">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
      </widget>
+    </item>
+    <item row="0" column="15">
+     <widget class="QLabel" name="lbl_db_selection">
+      <property name="text">
+       <string>Database</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="2" colspan="3">
+     <widget class="QLineEdit" name="txt_add_name"/>
     </item>
     <item row="3" column="0">
      <widget class="QLabel" name="lbl_CWID_2">
@@ -249,64 +351,43 @@
       </property>
      </widget>
     </item>
-    <item row="7" column="5" colspan="4">
-     <widget class="QListWidget" name="list_hrs">
-      <property name="enabled">
-       <bool>false</bool>
+    <item row="1" column="7" colspan="3">
+     <widget class="QPushButton" name="btn_delete">
+      <property name="text">
+       <string>Delete</string>
       </property>
      </widget>
     </item>
-    <item row="7" column="10" colspan="5">
-     <widget class="QListWidget" name="list_req">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="2" colspan="2">
-     <widget class="QListWidget" name="list_status">
-      <property name="enabled">
-       <bool>false</bool>
+    <item row="5" column="12" colspan="3">
+     <widget class="QPushButton" name="btn_deduction">
+      <property name="text">
+       <string>Apply</string>
       </property>
      </widget>
     </item>
     <item row="8" column="11">
-     <widget class="QCheckBox" name="checkBox_2">
+     <widget class="QCheckBox" name="checkBox">
       <property name="text">
-       <string>Week</string>
+       <string>Day</string>
       </property>
      </widget>
     </item>
-    <item row="6" column="2">
-     <widget class="QLabel" name="lbl_Status">
-      <property name="text">
-       <string>Status</string>
+    <item row="5" column="11">
+     <widget class="QDoubleSpinBox" name="spin_deductions">
+      <property name="buttonSymbols">
+       <enum>QAbstractSpinBox::PlusMinus</enum>
+      </property>
+      <property name="singleStep">
+       <double>0.500000000000000</double>
       </property>
      </widget>
     </item>
-    <item row="6" column="0">
-     <widget class="QLabel" name="lbl_Name">
+    <item row="3" column="11">
+     <widget class="QLabel" name="lbl_CWID_5">
       <property name="text">
-       <string>Name</string>
+       <string>Deductions</string>
       </property>
      </widget>
-    </item>
-    <item row="1" column="7" colspan="5">
-     <widget class="QPushButton" name="btn_tsting">
-      <property name="text">
-       <string>Push me, bitch</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="10" colspan="4">
-     <widget class="QLabel" name="lbl_Hrs_Req">
-      <property name="text">
-       <string>Hours Required</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="0" colspan="2">
-     <widget class="QLineEdit" name="txt_add_card"/>
     </item>
     <item row="3" column="5">
      <widget class="QLabel" name="lbl_CWID_4">
@@ -315,34 +396,10 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="3">
-     <widget class="QPushButton" name="btn_clk_in_out">
-      <property name="text">
-       <string>Clock In/Out</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0" colspan="15">
-     <widget class="Line" name="line">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="9">
-     <widget class="Line" name="line_4">
+    <item row="5" column="9" rowspan="2">
+     <widget class="Line" name="line_5">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="2" colspan="3">
-     <widget class="QLineEdit" name="txt_add_name"/>
-    </item>
-    <item row="3" column="2">
-     <widget class="QLabel" name="lbl_CWID_3">
-      <property name="text">
-       <string>Name</string>
       </property>
      </widget>
     </item>
@@ -353,13 +410,13 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>897</width>
+     <width>1180</width>
      <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHomecoming_Time_v0_02">
     <property name="title">
-     <string>Homecoming Time v0.02</string>
+     <string>Homecoming Time v0.21</string>
     </property>
    </widget>
    <addaction name="menuHomecoming_Time_v0_02"/>
@@ -373,6 +430,11 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionHomecoming_Time_v0_21">
+   <property name="text">
+    <string>Homecoming Time v0.21</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

@@ -9,7 +9,7 @@
  * class.
  *
  * Author: Sam McAnelly
- * Last Revised: 5/21/2015
+ * Last Revised: 6/22/2015
  *
  *
  * ---------------------------------------------*/
@@ -47,33 +47,38 @@ void DB_Controller::set_gender(db_gender gender)
     switch(gender)
     {
     case GUYS:
-        active_db = ptr_db_students_male;
+        active_db      = ptr_db_students_male;
+        active_count   = &male_student_count;
+        active_idx     = &male_idx;
         break;
     case GIRLS:
         active_db = ptr_db_students_female;
+        active_count   = &female_student_count;
+        active_idx     = &female_idx;
         break;
-    default:
-        qDebug("Invalid database gender selection...");
     }
 }
 
 int DB_Controller::get_student_count()
 {
-    if (active_db == ptr_db_students_male)
-        return male_student_count;
-    else
-        return female_student_count;
-}
-void DB_Controller::set_student_count(int count)
-{
-    if (active_db == ptr_db_students_male)
-        male_student_count = count;
-    else
-        female_student_count = count;
+    return *active_idx;
 }
 
 void DB_Controller::generate_report(report_type type)
 {
+
+}
+
+void DB_Controller::add_student(std::string name, std::string card_num, float hours_req)
+{
+    if( *active_idx == *active_count )
+    {
+        resize_db();
+        qDebug("> Database resized: [ new size ] - %d", *active_count);
+    }
+    active_db[ (*active_idx)++ ] = new Student(name, card_num, hours_req);
+    qDebug("> New student created at: %d", ( *active_idx - 1 ) );
+
 
 }
 
@@ -86,14 +91,7 @@ int DB_Controller::search_name(std::string name)
     }
 
     std::string name_from_array;
-
-    int count;
-    if (active_db == ptr_db_students_male)
-        count = male_student_count;
-    else
-        count = female_student_count;
-
-    for(int i = 0; i < count; i++)
+    for(int i = 0; i < *active_idx; i++)
     {
         name_from_array = active_db[i]->get_name();
         for (std::string::iterator i = name_from_array.begin(); i != name_from_array.end(); i++)
@@ -110,13 +108,8 @@ int DB_Controller::search_name(std::string name)
 
 int DB_Controller::search_card_number(std::string number)
 {
-    int count;
-    if (active_db == ptr_db_students_male)
-        count = male_student_count;
-    else
-        count = female_student_count;
     std::string num_from_array;
-    for (int i = 0; i < count; i++)
+    for (int i = 0; i < *active_idx; i++)
     {
         num_from_array = num_from_array = active_db[i]->get_card_number();
         if(number.compare(num_from_array) == 0)
@@ -158,27 +151,7 @@ void DB_Controller::toggle_status_from_index(int i)
 
 void DB_Controller::sort(DB_Sort::sort_by sortby)
 {
-    int count;
-    switch (sortby)
-    {
-    case DB_Sort::F_NAME:
-        break;
-    case DB_Sort::L_NAME:
-        break;
-    case DB_Sort::STATUS:
-        break;
-    case DB_Sort::TIME_COMPLETE:
-        break;
-    case DB_Sort::TIME_REQUIRED:
-        if(active_db == ptr_db_students_male)
-            count = male_student_count;
-        else
-            count = female_student_count;
-        DB_Sort::sort(active_db, count, DB_Sort::TIME_REQUIRED);
-        break;
-    default:
-        return;
-    }
+    DB_Sort::sort(active_db, *active_idx , sortby);
 }
 
 /*------------------------------------------------
@@ -198,26 +171,46 @@ void DB_Controller::save_student_data()
 
 void DB_Controller::fetch_settings()
 {
+    std::ifstream reader;
+    reader.open("settings.hmt");
+
+    std::string curr_line;
+    int i = 0;
+
+    while(std::getline(reader, curr_line))
+    {
+        switch(i)
+        {
+        case 0:
+            guy_db = curr_line;
+            break;
+        case 1:
+            girl_db = curr_line;
+            break;
+        case 2:
+            guy_fine = ::atof(curr_line.c_str());
+            break;
+        case 3:
+            girl_fine = ::atof(curr_line.c_str());
+            break;
+        case 4:
+            report_path = curr_line;
+            break;
+        }
+        ++i;
+    }
 
 }
 
 const char * DB_Controller::compute_db(db_gender gender, database db)
-{
-    //computes the current path
-    //the database should always be kept in the same working directory as the application
-    QDir dir = QDir::currentPath();
-    dir.cdUp();
-    dir.cdUp();
-    dir.cdUp();
-    QString path = dir.absolutePath();
-    std::string utf8_path = path.toUtf8().constData();
-    std::string file_name;
+{   std::string file_name;
     std::string gen_folder;
     std::string sub_folder = "";
+
     if (gender == GUYS)
-        gen_folder = "/ato/";
+        gen_folder = guy_db;
     else
-        gen_folder = "/adpi/";
+        gen_folder = girl_db;
     switch(db)
     {
         case (NAME):
@@ -243,7 +236,7 @@ const char * DB_Controller::compute_db(db_gender gender, database db)
         {
             file_name = "db_time_required";
             if (gender == GIRLS)
-                sub_folder = "/current/";
+                sub_folder = "current/";
             break;
         }
 
@@ -255,7 +248,8 @@ const char * DB_Controller::compute_db(db_gender gender, database db)
 
     }
 
-    return (utf8_path + HOCO_DB + gen_folder + sub_folder + file_name).c_str();
+    qDebug("%s", (gen_folder + sub_folder + file_name).c_str());
+    return (gen_folder + sub_folder + file_name).c_str();
 }
 
 void DB_Controller::compute_report_output(db_gender gender, report_type type)
@@ -293,13 +287,16 @@ void DB_Controller::fill_string_array(db_gender gender, database db)
         {
         case GUYS:
             male_student_count = i;
+            male_idx           = i;
             break;
         case GIRLS:
             female_student_count = i;
+            female_idx           = i;
             break;
         }
     }
 }
+
 void DB_Controller::fill_float_array(db_gender gender, database db)
 {
     std::ifstream reader;
@@ -451,6 +448,7 @@ void DB_Controller::populate_student_completed_hours(db_gender gender)
         count = female_student_count;
         break;
     }
+
     for(int i = 0; i < count; i++)
     {
         active_db[i]->set_hours_complete(student_cmplt_hours[i]);
@@ -459,31 +457,35 @@ void DB_Controller::populate_student_completed_hours(db_gender gender)
 
 void DB_Controller::resize_db()
 {
-    int *count;
-    if( active_db == ptr_db_students_male)
-        count = &male_student_count;
-    else
-        count = &female_student_count;
+    int idx;
 
-    Student **ptr_temp = new Student*[*count + 50];
+    Student **ptr_temp = new Student*[*active_idx + 50];
 
-    for(int i = 0; i < *count; i++)
+    for( idx = 0; idx < *active_idx; idx++ )
     {
-        ptr_temp[i] = active_db[i];
+        ptr_temp[ idx ] = active_db[ idx ];
     }
 
-    active_db = ptr_temp;
-    *count += 50;
+    if( active_db == ptr_db_students_male)
+    {
+        //delete ptr_db_students_male;
+        ptr_db_students_male = ptr_temp;
+        active_db = ptr_db_students_male;
+    }
+    else if( active_db == ptr_db_students_female)
+    {
+        //delete ptr_db_students_female;
+        ptr_db_students_female = ptr_temp;
+        active_db = ptr_db_students_female;
+    }
+    *active_count += 50;
+    qDebug("Active Index: %d", *active_idx);
+    //*active_idx++;
 }
 
 void DB_Controller::generate_daily_report()
 {
-    int count;
-    if (active_db == ptr_db_students_male)
-        count = male_student_count;
-    else
-        count = female_student_count;
-    daily_report = new std::string[count + FORMATTING_LINES];
+    daily_report = new std::string[*active_idx + FORMATTING_LINES];
 }
 
 void DB_Controller::generate_weekly_report()

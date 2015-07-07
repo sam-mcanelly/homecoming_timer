@@ -151,6 +151,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    sorting = false;
     init = false;
     controller = new DB_Controller();
 }
@@ -159,12 +160,6 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete controller;
-}
-
-void MainWindow::on_btn_tsting_clicked()
-{
-    controller->sort(DB_Sort::TIME_REQUIRED);
-    refresh_student_lists();
 }
 
 //Syncing the QListViewWidgets
@@ -193,10 +188,17 @@ void MainWindow::on_list_name_currentRowChanged(int currentRow)
     bar = ui->list_name->verticalScrollBar();
     bar->setValue(scroll_index);
 
+    if( !sorting )
+    {
+        ui->txt_cwid_name->setText(QString::fromStdString(controller->get_name_from_index(ui->list_name->currentRow())));
+    }
+
 }
 
 void MainWindow::on_btn_find_clicked()
 {
+    if (!init)
+        return;
     int index = controller->search_name(ui->txt_cwid_name->text().toUtf8().constData());
     if(index == -1)
         index = controller->search_card_number(ui->txt_cwid_name->text().toUtf8().constData());
@@ -212,6 +214,8 @@ void MainWindow::on_btn_find_clicked()
 
 void MainWindow::on_btn_clk_in_out_clicked()
 {
+    if (!init)
+        return;
     std::string name = ui->txt_cwid_name->text().toUtf8().constData();
     int index = ui->list_name->currentRow();
     if(name.compare("") == 0)
@@ -245,7 +249,7 @@ void MainWindow::on_btn_clk_in_out_clicked()
 
 void MainWindow::on_combo_db_selection_currentIndexChanged(int index)
 {
-    if(!init)
+    if (!init)
     {
        controller->begin();
        init = true;
@@ -263,15 +267,33 @@ void MainWindow::on_combo_db_selection_currentIndexChanged(int index)
         break;
     }
 
+
     refresh_student_lists();
 }
 
 void MainWindow::on_btn_add_clicked()
 {
+    if(!init)
+        return;
 
+    controller->add_student(ui->txt_add_name->text().toStdString(), ui->txt_add_card->text().toStdString(), ::atof(ui->combo_hours_req->currentText().toStdString().c_str()));
+    refresh_student_lists();
 }
 
 void MainWindow::on_btn_sort_clicked()
 {
+    if (!init)
+        return;
+    sorting = true;
     controller->sort( (DB_Sort::sort_by)ui->combo_sort_by->currentIndex() );
+    refresh_student_lists();
+    sorting = false;
+}
+
+void MainWindow::on_txt_cwid_name_textChanged(const QString &arg1)
+{
+    if( ui->txt_cwid_name->text().contains(first_card_char) )
+        ui->txt_cwid_name->setEchoMode(QLineEdit::Password);
+    else
+        ui->txt_cwid_name->setEchoMode(QLineEdit::Normal);
 }

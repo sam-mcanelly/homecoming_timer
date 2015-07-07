@@ -39,6 +39,7 @@ private:
 public:
     Student();
     Student(std::string _name);
+    Student(std::string _name, std::string _card_num, float _hours_req);
     Student& operator=(const Student &old_stud);
 
     float get_hours_required() const;

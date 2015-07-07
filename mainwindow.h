@@ -41,8 +41,6 @@ private slots:
     void fill_hours_required_list();
     void fill_hours_complete_list();
 
-    void on_btn_tsting_clicked();
-
     void on_list_name_currentRowChanged(int currentRow);
 
     void on_btn_find_clicked();
@@ -54,16 +52,23 @@ private slots:
     void on_btn_add_clicked();
     void on_btn_sort_clicked();
 
+    void on_txt_cwid_name_textChanged(const QString &arg1);
+
 private:
     //Database Controller
     DB_Controller *controller;
     bool init;
+
+    //Don't update certain things if we are sorting
+    bool sorting;
 
     //current pomping week
     int curr_week;
 
     //database selection for either guys or girls
     int db_selection;
+
+    const QChar first_card_char = '%';
 
     Ui::MainWindow *ui;
 };

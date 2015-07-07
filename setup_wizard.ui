@@ -55,8 +55,143 @@ to the next step</string>
     </property>
    </widget>
   </widget>
-  <widget class="QWizardPage" name="wzrd_names"/>
-  <widget class="QWizardPage" name="wizard_done"/>
+  <widget class="QWizardPage" name="wzrd_names">
+   <widget class="QLabel" name="lbl_enter_nms">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>50</y>
+      <width>311</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>First, please enter the names 
+of the fraternity and sorority</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="ln_frat">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>180</y>
+      <width>301</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="ln_sor">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>240</y>
+      <width>301</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbl_frat">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>160</y>
+      <width>59</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Fraternity</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbl_sor">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>220</y>
+      <width>59</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Sorority</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QWizardPage" name="wizard_done">
+   <widget class="QLabel" name="lbl_fines">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>55</y>
+      <width>311</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Please enter the fines in dollars 
+for each house.</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="spin_guy_fine">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>165</y>
+      <width>111</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="maximum">
+     <number>50</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbl_frat_2">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>170</y>
+      <width>59</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Fraternity</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="spin_girl_fine">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>205</y>
+      <width>111</width>
+      <height>24</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbl_sor_2">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>210</y>
+      <width>59</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Sorority</string>
+    </property>
+   </widget>
+  </widget>
  </widget>
  <resources/>
  <connections/>

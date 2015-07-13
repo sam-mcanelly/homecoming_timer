@@ -1,5 +1,6 @@
 #include "setup_wizard.h"
 #include "ui_setup_wizard.h"
+#include "mainwindow.h"
 
 SetupWizard::SetupWizard(QWidget *parent) :
     QWizard(parent),
@@ -29,17 +30,16 @@ void SetupWizard::on_SetupWizard_accepted()
     my_settings << dir.absolutePath().toStdString() << "/hoco_db/" << girl_db.toStdString() << "/\n";
     my_settings << guy_fine << "\n";
     my_settings << girl_fine << "\n";
+    dir.cd("hoco_db");
+    dir.mkdir(guy_db.toStdString().c_str());
+    dir.mkdir(girl_db.toStdString().c_str());
+    dir.cdUp();
     dir.cdUp();
     dir.cdUp();
     dir.cdUp();
     dir.mkdir("reports");
     my_settings << dir.absolutePath().toStdString() << "/reports/" << "\n";
     my_settings.close();
-
-
-
-    MainWindow w;
-    w.show();
 }
 
 void SetupWizard::on_ln_frat_textChanged()

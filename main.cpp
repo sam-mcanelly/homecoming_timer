@@ -42,7 +42,8 @@ int main(int argc, char *argv[])
 
     if (!f_exists("settings.hmt"))
     {
-        s.show();
+       w.show();
+       s.show();
     }
     else
     {

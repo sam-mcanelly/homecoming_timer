@@ -31,7 +31,8 @@ public:
         NAME,
         CWID,
         TIME_COMPLETE,
-        TIME_REQUIRED
+        TIME_REQUIRED,
+        DB_COUNT
     };
 
     enum db_type
@@ -56,8 +57,7 @@ public:
     ~DB_Controller();
 
     void begin();
-
-    void load_data();
+    void end();
 
     void add_student(std::string name, std::string card_num, float hours_req);
 
@@ -115,8 +115,9 @@ private:
     float       *student_req_hours;
     float       *student_cmplt_hours;
 
+    bool        is_active;
+
     void initialize_db_controller();
-    void save_student_data();
 
     void fetch_settings();
 
@@ -126,6 +127,8 @@ private:
     void fill_string_array(db_gender gender, database db);
     void fill_float_array(db_gender gender, database db);
 
+    void write_to_file(db_gender, database db);
+
     void populate_student_information();
 
     void populate_student_names(db_gender gender);
@@ -133,7 +136,13 @@ private:
     void populate_student_required_hours(db_gender gender);
     void populate_student_completed_hours(db_gender gender);
 
+    void sort_db(DB_Sort::sort_by type, db_gender gen);
+
     void resize_db();
+
+    void clock_out_all();
+    void clock_out_from_idx(int i);
+    void save_student_data();
 
     void generate_daily_report();
     void generate_weekly_report();

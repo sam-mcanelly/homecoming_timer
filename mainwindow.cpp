@@ -159,6 +159,10 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    if( init )
+    {
+        controller->end();
+    }
     delete controller;
 }
 
@@ -198,7 +202,13 @@ void MainWindow::on_list_name_currentRowChanged(int currentRow)
 void MainWindow::on_btn_find_clicked()
 {
     if (!init)
+    {
+        QMessageBox box;
+        box.setText("Select a database!");
+        box.exec();
         return;
+    }
+
     int index = controller->search_name(ui->txt_cwid_name->text().toUtf8().constData());
     if(index == -1)
         index = controller->search_card_number(ui->txt_cwid_name->text().toUtf8().constData());
@@ -215,7 +225,12 @@ void MainWindow::on_btn_find_clicked()
 void MainWindow::on_btn_clk_in_out_clicked()
 {
     if (!init)
+    {
+        QMessageBox box;
+        box.setText("Select a database!");
+        box.exec();
         return;
+    }
     std::string name = ui->txt_cwid_name->text().toUtf8().constData();
     int index = ui->list_name->currentRow();
     if(name.compare("") == 0)
@@ -274,10 +289,22 @@ void MainWindow::on_combo_db_selection_currentIndexChanged(int index)
 void MainWindow::on_btn_add_clicked()
 {
     if(!init)
+    {
+        QMessageBox box;
+        box.setText("Select a database!");
+        box.exec();
         return;
+    }
 
     controller->add_student(ui->txt_add_name->text().toStdString(), ui->txt_add_card->text().toStdString(), ::atof(ui->combo_hours_req->currentText().toStdString().c_str()));
     refresh_student_lists();
+
+    /*------------------------
+     * clear the text fields
+     * ----------------------*/
+    ui->txt_add_card->clear();
+    ui->txt_add_name->clear();
+
 }
 
 void MainWindow::on_btn_sort_clicked()

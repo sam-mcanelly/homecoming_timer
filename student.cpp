@@ -34,6 +34,7 @@ Student::Student(std::string _name, std::string _card_num, float _hours_req)
     name             = _name;
     card_number      = _card_num;
     hours_required   = _hours_req;
+    hours_complete   =  0;
 
     compute_names();
 
@@ -186,11 +187,14 @@ void Student::set_card_number(std::string new_card_number)
 
 void Student::clock_in()
 {
+    status = true;
     timer.start();
 }
 
 void Student::clock_out()
 {
+    if(!status)
+        return;
 
     float time_done = ((timer.elapsed() / 1000.0) / 60.0) / 60.0;
 
@@ -201,6 +205,8 @@ void Student::clock_out()
     //qDebug(s.c_str());
 
     increment_hours_complete(time_done);
+
+    status = false;
 }
 
 void Student::output_debug_info()

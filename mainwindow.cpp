@@ -151,7 +151,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    sorting = false;
     init = false;
     controller = new DB_Controller();
 }
@@ -192,11 +191,7 @@ void MainWindow::on_list_name_currentRowChanged(int currentRow)
     bar = ui->list_name->verticalScrollBar();
     bar->setValue(scroll_index);
 
-    if( !sorting )
-    {
-        ui->txt_cwid_name->setText(QString::fromStdString(controller->get_name_from_index(ui->list_name->currentRow())));
-    }
-
+    ui->txt_cwid_name->setText(QString::fromStdString(controller->get_name_from_index(ui->list_name->currentRow())));
 }
 
 void MainWindow::on_btn_find_clicked()
@@ -311,10 +306,8 @@ void MainWindow::on_btn_sort_clicked()
 {
     if (!init)
         return;
-    sorting = true;
     controller->sort( (DB_Sort::sort_by)ui->combo_sort_by->currentIndex() );
     refresh_student_lists();
-    sorting = false;
 }
 
 void MainWindow::on_txt_cwid_name_textChanged(const QString &arg1)

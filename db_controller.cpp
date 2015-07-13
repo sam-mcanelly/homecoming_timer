@@ -129,32 +129,70 @@ int DB_Controller::search_card_number(std::string number)
 
 std::string DB_Controller::get_name_from_index(int i)
 {
-    return active_db[i]->get_name();
+    if( i > -1 && i < *active_idx)
+    {
+        return active_db[i]->get_name();
+    }
+    else
+    {
+        return "";
+    }
 }
 
 std::string DB_Controller::get_card_num_from_index(int i)
 {
-    return active_db[i]->get_card_number();
+    if( i > -1 && i < *active_idx)
+    {
+        return active_db[i]->get_card_number();
+    }
+    else
+    {
+        return "";
+    }
 }
 
 float DB_Controller::get_hours_req_from_index(int i)
 {
-    return active_db[i]->get_hours_required();
+    if( i > -1 && i < *active_idx)
+    {
+        return active_db[i]->get_hours_required();
+    }
+    else
+    {
+        return -1.0f;
+    }
 }
 
 float DB_Controller::get_hours_comp_from_index(int i)
 {
-    return active_db[i]->get_hours_complete();
+    if( i > -1 && i < *active_idx)
+    {
+        return active_db[i]->get_hours_complete();
+    }
+    else
+    {
+        return -1.0f;
+    }
 }
 
 bool DB_Controller::get_status_from_index(int i)
 {
-    return active_db[i]->get_status();
+    if( i > -1 && i < *active_idx)
+    {
+        return active_db[i]->get_status();
+    }
+    else
+    {
+        return false;
+    }
 }
 
 void DB_Controller::toggle_status_from_index(int i)
 {
-    active_db[i]->toggle_status();
+    if( i > -1 && i < *active_idx)
+    {
+        active_db[ i ]->toggle_status();
+    }
 }
 
 void DB_Controller::sort(DB_Sort::sort_by sortby)

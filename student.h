@@ -61,6 +61,7 @@ public:
     std::string get_card_number() const;
     void set_card_number(std::string new_card_number);
 
+    QTime get_timer() const;
     void clock_in();
     void clock_out();
 

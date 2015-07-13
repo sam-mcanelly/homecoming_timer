@@ -44,13 +44,12 @@ Student::Student(std::string _name, std::string _card_num, float _hours_req)
 
 Student& Student::operator =(const Student &old_stud)
 {
-    this->name = old_stud.get_name();
-    this->card_number = old_stud.get_card_number();
-    this->hours_complete = old_stud.get_hours_complete();
-    this->hours_required = old_stud.get_hours_required();
-    this->status = old_stud.get_status();
-
-    //ADD CODE TO GET TIME CLOCKED IN
+    this->name             = old_stud.get_name();
+    this->card_number      = old_stud.get_card_number();
+    this->hours_complete   = old_stud.get_hours_complete();
+    this->hours_required   = old_stud.get_hours_required();
+    this->status           = old_stud.get_status();
+    this->timer            = old_stud.get_timer();
 
     //Copy over first name
     int i = 0;
@@ -183,6 +182,11 @@ std::string Student::get_card_number() const
 void Student::set_card_number(std::string new_card_number)
 {
     card_number = new_card_number;
+}
+
+QTime Student::get_timer() const
+{
+    return timer;
 }
 
 void Student::clock_in()

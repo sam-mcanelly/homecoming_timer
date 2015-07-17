@@ -31,8 +31,11 @@ DB_Controller::DB_Controller()
 
 DB_Controller::~DB_Controller()
 {
-    delete[] ptr_db_students_male;
-    delete[] ptr_db_students_female;
+    if( is_active )
+    {
+        delete[] ptr_db_students_male;
+        delete[] ptr_db_students_female;
+    }
 }
 
 void DB_Controller::begin()
@@ -86,8 +89,52 @@ void DB_Controller::add_student(std::string name, std::string card_num, float ho
     }
     active_db[ (*active_idx)++ ] = new Student(name, card_num, hours_req);
     qDebug("> New student created at: %d", ( *active_idx - 1 ) );
+}
 
+void DB_Controller::delete_student(int index)
+{
+    if( ( index < 0 ) && ( index >= *active_idx ))
+    {
+        return;
+    }
+    else if( index == ( *active_idx - 1 ) )
+    {
+        qDebug("> Last student deleted. No need to shrink array");
+        *active_idx -= 1;
+        return;
+    }
 
+    Student **new_db;
+    int       idx;
+    int       sub;
+
+    sub             = 0;
+    *active_count  -= 1;
+    new_db          = new Student*[ *active_count ];
+
+    for( idx = 0; idx < *active_idx; idx++ )
+    {
+        if( idx == index  )
+        {
+            sub = -1;
+            qDebug("> Deleting index: %d", idx);
+            continue;
+        }
+        new_db[ idx + sub ] = active_db[ idx ];
+    }
+
+    *active_idx -= 1;
+
+    if( active_db == ptr_db_students_male )
+    {
+        ptr_db_students_male = new_db;
+        active_db            = ptr_db_students_male;
+    }
+    else if( active_db == ptr_db_students_female )
+    {
+        ptr_db_students_female = new_db;
+        active_db              = ptr_db_students_female;
+    }
 }
 
 int DB_Controller::search_name(std::string name)
@@ -129,7 +176,7 @@ int DB_Controller::search_card_number(std::string number)
 
 std::string DB_Controller::get_name_from_index(int i)
 {
-    if( i > -1 && i < *active_idx)
+    if( ( i > -1 ) && ( i < *active_idx ) )
     {
         return active_db[i]->get_name();
     }
@@ -595,7 +642,8 @@ void DB_Controller::resize_db()
         active_db = ptr_db_students_female;
     }
     *active_count += 50;
-    qDebug("Active Index: %d", *active_idx);
+
+    qDebug("> %s database resized: new size - %d", active_db == ptr_db_students_male ? "Male" : "Female", *active_count);
 }
 
 void DB_Controller::clock_out_all()

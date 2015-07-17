@@ -54,6 +54,10 @@ private slots:
 
     void on_txt_cwid_name_textChanged(const QString &arg1);
 
+    void on_btn_delete_clicked();
+
+    void on_txt_add_card_textChanged(const QString &arg1);
+
 private:
     //Database Controller
     DB_Controller *controller;

@@ -32,7 +32,7 @@ private:
     float           hours_required;
     float           hours_complete;
     bool            status;
-    QTime           timer;
+    QTime           *timer;
 
     void compute_names();
 
@@ -40,6 +40,8 @@ public:
     Student();
     Student(std::string _name);
     Student(std::string _name, std::string _card_num, float _hours_req);
+    ~Student();
+
     Student& operator=(const Student &old_stud);
 
     float get_hours_required() const;
@@ -61,7 +63,7 @@ public:
     std::string get_card_number() const;
     void set_card_number(std::string new_card_number);
 
-    QTime get_timer() const;
+    QTime *get_timer() const;
     void clock_in();
     void clock_out();
 

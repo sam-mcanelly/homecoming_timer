@@ -60,6 +60,7 @@ public:
     void end();
 
     void add_student(std::string name, std::string card_num, float hours_req);
+    void delete_student(int index);
 
     void set_gender(db_gender gender);
 
@@ -83,6 +84,10 @@ private:
     Student **ptr_db_students_male;
     Student **ptr_db_students_female;
     Student **active_db;
+
+    float    *base_time_male;
+    float    *base_time_female;
+    float    *active_base_time;
 
     int *active_count;
     int *active_idx;

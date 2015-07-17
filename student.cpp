@@ -42,6 +42,12 @@ Student::Student(std::string _name, std::string _card_num, float _hours_req)
 
 }
 
+Student::~Student()
+{
+    delete[] f_name;
+    delete[] l_name;
+}
+
 Student& Student::operator =(const Student &old_stud)
 {
     this->name             = old_stud.get_name();
@@ -129,11 +135,16 @@ void Student::set_status(bool new_status)
 
 void Student::toggle_status()
 {
-    status = !status;
-    if(!status)
+    if(status)
+    {
         clock_out();
+    }
     else
+    {
         clock_in();
+    }
+
+    status = !status;
 }
 
 float Student::get_hours_complete() const
@@ -184,15 +195,16 @@ void Student::set_card_number(std::string new_card_number)
     card_number = new_card_number;
 }
 
-QTime Student::get_timer() const
+QTime* Student::get_timer() const
 {
     return timer;
 }
 
 void Student::clock_in()
 {
-    status = true;
-    timer.start();
+    qDebug("> %s clocked in", name.c_str());
+    timer = new QTime();
+    timer->start();
 }
 
 void Student::clock_out()
@@ -200,17 +212,19 @@ void Student::clock_out()
     if(!status)
         return;
 
-    float time_done = ((timer.elapsed() / 1000.0) / 60.0) / 60.0;
+    qDebug("> %s clocked out", name.c_str());
+
+    float time_done = ((timer->elapsed() / 1000.0) / 60.0) / 60.0;
 
     //Code for testing
-    //std::ostringstream ss;
-    //ss << time_done;
-    //std::string s(ss.str());
-    //qDebug(s.c_str());
+    std::ostringstream ss;
+    ss << time_done;
+    std::string s(ss.str());
+    qDebug(s.c_str());
 
     increment_hours_complete(time_done);
 
-    status = false;
+    delete timer;
 }
 
 void Student::output_debug_info()

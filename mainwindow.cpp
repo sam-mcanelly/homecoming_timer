@@ -69,10 +69,13 @@ void MainWindow::fill_name_list()
     //clear the name list widgets first just in case
     ui->list_name->clear();
 
-    int i = 0;
+    int i    = 0;
+    int end  = 0;
+
+    end      = controller->get_student_count();
 
     QString curr_name;
-    while (i < controller->get_student_count())
+    while ( i < end )
     {
         curr_name = QString::fromStdString(controller->get_name_from_index(i));
         QListWidgetItem *itm = new QListWidgetItem;
@@ -151,18 +154,22 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    init = false;
+    init       = false;
     controller = new DB_Controller();
 }
 
 MainWindow::~MainWindow()
 {
+    qDebug("> Deleting ui...");
     delete ui;
+    qDebug("> ui deleted");
     if( init )
     {
         controller->end();
     }
+    qDebug("> Deleting database controller memory...");
     delete controller;
+    qDebug("> Database controller memory deleted");
 }
 
 //Syncing the QListViewWidgets
@@ -226,8 +233,11 @@ void MainWindow::on_btn_clk_in_out_clicked()
         box.exec();
         return;
     }
+
+    int index;
+
     std::string name = ui->txt_cwid_name->text().toUtf8().constData();
-    int index = ui->list_name->currentRow();
+    index = ui->list_name->currentRow();
     if(name.compare("") == 0)
     {
         controller->toggle_status_from_index(index);
@@ -252,7 +262,15 @@ void MainWindow::on_btn_clk_in_out_clicked()
             controller->toggle_status_from_index(index);
             fill_status_list();
             fill_hours_complete_list();
+
+            /*----------------------------------------------
+             *     Reset all rows to the appropriate
+             *     index.
+             * -------------------------------------------*/
             ui->list_name->setCurrentRow(index);
+            ui->list_hrs->setCurrentRow(index);
+            ui->list_req->setCurrentRow(index);
+            ui->list_status->setCurrentRow(index);
         }
     }
 }
@@ -264,6 +282,7 @@ void MainWindow::on_combo_db_selection_currentIndexChanged(int index)
        controller->begin();
        init = true;
     }
+
     switch(index)
     {
     case 0:
@@ -291,6 +310,22 @@ void MainWindow::on_btn_add_clicked()
         return;
     }
 
+    if( false == ui->txt_add_name->text().contains(" ") )
+    {
+        QMessageBox box;
+        box.setText("Student name improperly formatted!");
+        box.exec();
+        return;
+    }
+
+    if( ui->txt_add_card->text().length() < 10 )
+    {
+        QMessageBox box;
+        box.setText("Invalid card number!");
+        box.exec();
+        return;
+    }
+
     controller->add_student(ui->txt_add_name->text().toStdString(), ui->txt_add_card->text().toStdString(), ::atof(ui->combo_hours_req->currentText().toStdString().c_str()));
     refresh_student_lists();
 
@@ -313,7 +348,92 @@ void MainWindow::on_btn_sort_clicked()
 void MainWindow::on_txt_cwid_name_textChanged(const QString &arg1)
 {
     if( ui->txt_cwid_name->text().contains(first_card_char) )
+    {
         ui->txt_cwid_name->setEchoMode(QLineEdit::Password);
+    }
     else
+    {
         ui->txt_cwid_name->setEchoMode(QLineEdit::Normal);
+    }
+}
+
+void MainWindow::on_btn_delete_clicked()
+{
+    /*----------------------------
+     * This action is costly
+     * Use it sparingly
+     * -------------------------*/
+    controller->delete_student(ui->list_name->currentRow());
+    refresh_student_lists();
+}
+
+void MainWindow::on_txt_add_card_textChanged(const QString &arg1)
+{
+
+    /*----------------------------
+     * Generate the name from the
+     * card information.
+     * -------------------------*/
+
+    QString first_name;
+    QString last_name;
+    QString final_name;
+    const char*   name;
+    int     idx;
+    int     length;
+
+    idx = 0;
+    name = arg1.toStdString().c_str();
+
+    qDebug("%s", name);
+
+    /*----------------------------
+     * Generate the name from the
+     * card information.
+     * -------------------------*/
+    while( name[ idx ] != '^' )
+    {
+        if( name[ idx ] == '\0' )
+        {
+            return;
+        }
+        idx++;
+    }
+    idx++;
+    last_name.append( QChar( name[ idx++ ] ) );
+    while( name[ idx ] != '/' )
+    {
+        if( name[ idx ] == '\0' )
+        {
+            return;
+        }
+        last_name.append(QChar( tolower(name[ idx++ ] ) ));
+        qDebug( last_name.toStdString().c_str() );
+    }
+    idx++;
+
+
+    if( name[ idx ] == '\0' )
+    {
+        return;
+    }
+    first_name.append( name[ idx++ ] );
+    if( name[ idx ] == '\0' )
+    {
+        return;
+    }
+    while( name[ idx ] != ' ')
+    {
+        if( name[ idx ] == '\0' )
+        {
+            return;
+        }
+        first_name.append( QChar( tolower( name[ idx++ ] ) ) );
+    }
+    first_name.append(' ');
+
+    final_name = first_name + last_name;
+
+    ui->txt_add_name->setText( final_name );
+
 }

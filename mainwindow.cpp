@@ -41,6 +41,7 @@
 /* ----------------------------------------------
  *          GLOBAL INSTANCE VARIABLES
  * ----------------------------------------------*/
+const QChar MainWindow::first_card_char = '%';
 
 
 /*------------------------------------------------
@@ -277,6 +278,7 @@ void MainWindow::on_btn_clk_in_out_clicked()
 
 void MainWindow::on_combo_db_selection_currentIndexChanged(int index)
 {
+    qDebug("> Ooooooga boooooga");
     if (!init)
     {
        controller->begin();
@@ -380,7 +382,6 @@ void MainWindow::on_txt_add_card_textChanged(const QString &arg1)
     QString final_name;
     const char*   name;
     int     idx;
-    int     length;
 
     idx = 0;
     name = arg1.toStdString().c_str();

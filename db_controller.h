@@ -122,24 +122,29 @@ private:
 
     bool        is_active;
 
+    static const std::string weekly_report_header[20];
+
     void initialize_db_controller();
 
     void fetch_settings();
 
-    const char *compute_db(db_gender gender, database db);
-    void compute_report_output(db_gender gender, report_type type);
+    void load_base_time(db_gender gen);
+    void save_base_time(db_gender gen);
 
-    void fill_string_array(db_gender gender, database db);
-    void fill_float_array(db_gender gender, database db);
+    const char *compute_db(db_gender gen, database db);
+    void compute_report_output(db_gender gen, report_type type);
 
-    void write_to_file(db_gender, database db);
+    void fill_string_array(db_gender gen, database db);
+    void fill_float_array(db_gender gen, database db);
+
+    void write_to_file(db_gender gen, database db);
 
     void populate_student_information();
 
-    void populate_student_names(db_gender gender);
-    void populate_student_card_numbers(db_gender gender);
-    void populate_student_required_hours(db_gender gender);
-    void populate_student_completed_hours(db_gender gender);
+    void populate_student_names(db_gender gen);
+    void populate_student_card_numbers(db_gender gen);
+    void populate_student_required_hours(db_gender gen);
+    void populate_student_completed_hours(db_gender gen);
 
     void sort_db(DB_Sort::sort_by type, db_gender gen);
 

@@ -72,7 +72,7 @@ private:
     //database selection for either guys or girls
     int db_selection;
 
-    const QChar first_card_char = '%';
+    static const QChar first_card_char;
 
     Ui::MainWindow *ui;
 };

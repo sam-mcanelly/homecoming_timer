@@ -32,6 +32,7 @@ private:
     float           hours_required;
     float           hours_complete;
     bool            status;
+    bool            names_computed;
     QTime           *timer;
 
     void compute_names();

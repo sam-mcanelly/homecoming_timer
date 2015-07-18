@@ -15,12 +15,13 @@
 
 Student::Student()
 {
-
+    names_computed = false;
 }
 
 Student::Student(std::string _name)
 {
-    name = _name;
+    name           = _name;
+    names_computed = false;
 
     //storing the first name and last name for sorting purposes
     compute_names();
@@ -32,6 +33,7 @@ Student::Student(std::string _name)
 Student::Student(std::string _name, std::string _card_num, float _hours_req)
 {
     name             = _name;
+    names_computed   = false;
     card_number      = _card_num;
     hours_required   = _hours_req;
     hours_complete   =  0;
@@ -44,8 +46,11 @@ Student::Student(std::string _name, std::string _card_num, float _hours_req)
 
 Student::~Student()
 {
-    delete[] f_name;
-    delete[] l_name;
+    if( names_computed )
+    {
+       delete[] f_name;
+       delete[] l_name;
+    }
 }
 
 Student& Student::operator =(const Student &old_stud)
@@ -111,6 +116,8 @@ void Student::compute_names()
     l_name = new char[++count];
     memcpy(l_name, &name[start_of_l_name], count);
     l_name[count] = '\0';
+
+    names_computed = true;
  }
 
 float Student::get_hours_required() const

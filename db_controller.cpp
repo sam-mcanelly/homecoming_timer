@@ -20,6 +20,27 @@
 
 #define FORMATTING_LINES        35
 
+const std::string DB_Controller::weekly_report_header[] ={ "+==================================================================+\n",
+                                                           "||				  Homecoming Time Weekly Report			           ||\n",
+                                                           "||	    =====================================================      ||\n",
+                                                           "||					        House:				                   ||\n",
+                                                           "||						     Date:					               ||\n",
+                                                           "||					  Week Number:					               ||\n",
+                                                           "||                  Fine Per Hour:                                 ||\n",
+                                                           "||                                                                 ||\n",
+                                                           "||	    =====================================================	   ||\n",
+                                                           "||									       			               ||\n",
+                                                           "||				Copyright © 2015 Sam McAnelly                      ||\n",
+                                                           "||											                       ||\n",
+                                                           "+==================================================================+\n",
+                                                           "                                                                    \n",
+                                                           "+==================================================================+\n",
+                                                           "+				Students With Incomplete Hours	                   +\n",
+                                                           "+    =======================================================       +\n",
+                                                           "+ Name					|| Hours         || Fine Amount            +\n",
+                                                           "+##################################################################+\n",
+                                                           "+                       ||   			 ||     		           +\n" };
+
 /*------------------------------------------------
  *          PUBLIC FUNCTION DEFINITIONS
  * -----------------------------------------------*/
@@ -33,6 +54,18 @@ DB_Controller::~DB_Controller()
 {
     if( is_active )
     {
+        int idx;
+
+        for( idx = 0; idx < male_idx; idx++ )
+        {
+            delete ptr_db_students_male[ idx ];
+        }
+
+        for( idx = 0; idx < female_idx; idx++ )
+        {
+            delete ptr_db_students_female[ idx ];
+        }
+
         delete[] ptr_db_students_male;
         delete[] ptr_db_students_female;
     }
@@ -61,11 +94,13 @@ void DB_Controller::set_gender(db_gender gen)
         active_db      = ptr_db_students_male;
         active_count   = &male_student_count;
         active_idx     = &male_idx;
+        gender         = GUYS;
         break;
     case GIRLS:
         active_db = ptr_db_students_female;
         active_count   = &female_student_count;
         active_idx     = &female_idx;
+        gender         = GIRLS;
         break;
     }
 }
@@ -100,7 +135,7 @@ void DB_Controller::delete_student(int index)
     else if( index == ( *active_idx - 1 ) )
     {
         qDebug("> Last student deleted. No need to shrink array");
-        *active_idx -= 1;
+        delete active_db[ --(*active_idx) ];
         return;
     }
 
@@ -465,6 +500,10 @@ void DB_Controller::write_to_file(db_gender gen, database db)
         case TIME_REQUIRED:
         {
             writer << db_write[ idx ]->get_hours_required() << "\n";
+            break;
+        }
+        case SETTINGS:
+        {
             break;
         }
         }

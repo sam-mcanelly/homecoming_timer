@@ -18,7 +18,7 @@
  *          LITERAL CONSTANTS
  * -------------------------------------------*/
 
-#define FORMATTING_LINES            27
+#define FORMATTING_LINES            26
 #define REPORT_HEADER_END_LENGTH    33
 #define REPORT_STUDENT_NAME_LENGTH  23
 #define REPORT_STUDNET_HOURS_LENGTH 15
@@ -30,7 +30,6 @@ const std::string DB_Controller::weekly_report_header[] ={ "+===================
                                                            "||      =====================================================      ||\n",
                                                            "||					        House:",
                                                            "||                           Date:",
-                                                           "||                    Week Number:",
                                                            "||                  Fine Per Hour:",
                                                            "||                                                                 ||\n",
                                                            "||       =====================================================     ||\n",
@@ -841,20 +840,22 @@ void DB_Controller::generate_daily_report(db_gender gen)
 
 void DB_Controller::generate_weekly_report()
 {
-    std::ofstream    writer;
-    std::string      output_file;
-    std::string      *weekly_report;
-    QString          begin_date;
-    QString          end_date;
-    std::string      date;
-    QDate            end;
-    int              idx;
+    std::ofstream     writer;
+    std::string       output_file;
+    std::string       *weekly_report;
+    std::string       date;
+    QString           fine;
+    QString           begin_date;
+    QString           end_date;
+    QDate             end;
+    int               idx;
 
-    end            = QDate::currentDate();
-    end_date       = QDate::currentDate().toString();
-    begin_date     = end.addDays( (qint64)(-7) ).toString();
-    output_file    = report_path + frat_name + "_week_" + "_" + begin_date.toStdString() + "_to_" + end_date.toStdString();
-    date           = begin_date.toStdString() + " - " + end_date.toStdString();
+    end             = QDate::currentDate();
+    end_date        = QDate::currentDate().toString();
+    begin_date      = end.addDays( (qint64)(-7) ).toString();
+    output_file     = report_path + frat_name + "_week_" + "_" + begin_date.toStdString() + "_to_" + end_date.toStdString();
+    date            = begin_date.toStdString() + " - " + end_date.toStdString();
+    fine            = QString::number(guy_fine);
     writer.open( output_file.c_str() );
 
     qDebug("> Output file: %s", output_file.c_str());
@@ -864,22 +865,32 @@ void DB_Controller::generate_weekly_report()
     weekly_report[0] = weekly_report_header[0];
     weekly_report[1] = weekly_report_header[1];
     weekly_report[2] = weekly_report_header[2];
-    weekly_report[3] = weekly_report_header[3];
 
-    weekly_report[3] = weekly_report[3] + frat_name;
-    for(idx = 0; idx < REPORT_HEADER_END_LENGTH - frat_name.length(); idx++)
+    weekly_report[3] = weekly_report_header[3] + frat_name;
+    for( idx = 0; idx < REPORT_HEADER_END_LENGTH - frat_name.length(); idx++ )
     {
         weekly_report[3] = weekly_report[3] + " ";
     }
     weekly_report[3] = weekly_report[3] + "||\n";
 
     weekly_report[4] = weekly_report_header[4] + date;
-    for( idx = 0; idx , REPORT_HEADER_END_LENGTH - date.length(); idx++ )
+    for( idx = 0; idx < REPORT_HEADER_END_LENGTH - date.length(); idx++ )
     {
         weekly_report[4] = weekly_report[4] + " ";
     }
     weekly_report[4] = weekly_report[4] + "||\n";
 
+    weekly_report[5] = weekly_report_header[5] + fine.toStdString();
+    for( idx = 0; idx < REPORT_HEADER_END_LENGTH - fine.length(); idx++ )
+    {
+        weekly_report[5] = weekly_report[5] + " ";
+    }
+    weekly_report[5] = weekly_report[5] + "||\n";
+
+    for( idx = 0; idx < 18; idx++ )
+    {
+        weekly_report[idx] = weekly_report_header[idx];
+    }
 
 
 

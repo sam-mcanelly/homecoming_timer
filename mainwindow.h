@@ -58,6 +58,8 @@ private slots:
 
     void on_txt_add_card_textChanged(const QString &arg1);
 
+    void on_btn_deduction_clicked();
+
 private:
     //Database Controller
     DB_Controller *controller;

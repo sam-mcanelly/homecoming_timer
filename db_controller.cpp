@@ -18,28 +18,39 @@
  *          LITERAL CONSTANTS
  * -------------------------------------------*/
 
-#define FORMATTING_LINES        35
+#define FORMATTING_LINES            27
+#define REPORT_HEADER_END_LENGTH    33
+#define REPORT_STUDENT_NAME_LENGTH  23
+#define REPORT_STUDNET_HOURS_LENGTH 15
+#define REPORT_STUDENT_FINE_LENGTH  24
+#define MAX_FLOAT_VAL               100
 
 const std::string DB_Controller::weekly_report_header[] ={ "+==================================================================+\n",
-                                                           "||				  Homecoming Time Weekly Report			           ||\n",
-                                                           "||	    =====================================================      ||\n",
-                                                           "||					        House:				                   ||\n",
-                                                           "||						     Date:					               ||\n",
-                                                           "||					  Week Number:					               ||\n",
-                                                           "||                  Fine Per Hour:                                 ||\n",
+                                                           "||                 Homecoming Time Weekly Report                   ||\n",
+                                                           "||      =====================================================      ||\n",
+                                                           "||					        House:",
+                                                           "||                           Date:",
+                                                           "||                    Week Number:",
+                                                           "||                  Fine Per Hour:",
                                                            "||                                                                 ||\n",
-                                                           "||	    =====================================================	   ||\n",
-                                                           "||									       			               ||\n",
-                                                           "||				Copyright © 2015 Sam McAnelly                      ||\n",
-                                                           "||											                       ||\n",
+                                                           "||       =====================================================     ||\n",
+                                                           "||                                                                 ||\n",
+                                                           "||              Copyright © 2015 Sam McAnelly                      ||\n",
+                                                           "||                                                                 ||\n",
                                                            "+==================================================================+\n",
                                                            "                                                                    \n",
                                                            "+==================================================================+\n",
-                                                           "+				Students With Incomplete Hours	                   +\n",
+                                                           "+                 Students With Incomplete Hours                   +\n",
                                                            "+    =======================================================       +\n",
-                                                           "+ Name					|| Hours         || Fine Amount            +\n",
+                                                           "+ Name                  || Hours         || Fine Amount            +\n",
                                                            "+##################################################################+\n",
-                                                           "+                       ||   			 ||     		           +\n" };
+                                                           "+                       ||               ||                        +\n",
+                                                           "+==================================================================+\n",
+                                                           "+                   Students Exceeding Hours                       +\n",
+                                                           "+    =======================================================       +\n",
+                                                           "+ Name                  || Hours         || Fine Amount            +\n",
+                                                           "+##################################################################+\n",
+                                                           "+                       ||               ||                        +\n"};
 
 /*------------------------------------------------
  *          PUBLIC FUNCTION DEFINITIONS
@@ -94,13 +105,11 @@ void DB_Controller::set_gender(db_gender gen)
         active_db      = ptr_db_students_male;
         active_count   = &male_student_count;
         active_idx     = &male_idx;
-        gender         = GUYS;
         break;
     case GIRLS:
         active_db = ptr_db_students_female;
         active_count   = &female_student_count;
         active_idx     = &female_idx;
-        gender         = GIRLS;
         break;
     }
 }
@@ -152,7 +161,7 @@ void DB_Controller::delete_student(int index)
         if( idx == index  )
         {
             sub = -1;
-            qDebug("> Deleting index: %d", idx);
+            delete active_db[ idx ];
             continue;
         }
         new_db[ idx + sub ] = active_db[ idx ];
@@ -162,11 +171,15 @@ void DB_Controller::delete_student(int index)
 
     if( active_db == ptr_db_students_male )
     {
+        delete[] ptr_db_students_male;
+
         ptr_db_students_male = new_db;
         active_db            = ptr_db_students_male;
     }
     else if( active_db == ptr_db_students_female )
     {
+        delete[] ptr_db_students_female;
+
         ptr_db_students_female = new_db;
         active_db              = ptr_db_students_female;
     }
@@ -257,6 +270,26 @@ float DB_Controller::get_hours_comp_from_index(int i)
     }
 }
 
+float DB_Controller::get_hours_deducted_from_index(int i)
+{
+    if( i > -1 && i < *active_idx)
+    {
+        return active_db[i]->get_hours_complete();
+    }
+    else
+    {
+        return -1.0f;
+    }
+}
+
+void DB_Controller::set_hours_deducted_from_index(int i, float deductions)
+{
+    if( i > -1 && i < *active_idx)
+    {
+        active_db[i]->set_deductions(deductions);
+    }
+}
+
 bool DB_Controller::get_status_from_index(int i)
 {
     if( i > -1 && i < *active_idx)
@@ -328,6 +361,11 @@ void DB_Controller::fetch_settings()
         case 4:
             report_path = curr_line;
             break;
+        case 5:
+            frat_name = curr_line;
+            break;
+        case 6:
+            sor_name = curr_line;
         }
         ++i;
     }
@@ -365,6 +403,10 @@ const char * DB_Controller::compute_db(db_gender gen, database db)
 
         case (TIME_REQUIRED):
             file_name = "db_time_required";
+            break;
+
+        case (TIME_DEDUCTED):
+            file_name = "db_time_deducted";
             break;
 
         default:
@@ -412,8 +454,8 @@ void DB_Controller::fill_string_array(db_gender gen, database db)
         switch(gen)
         {
         case GUYS:
-            male_student_count = i;
-            male_idx           = i;
+            male_student_count   = i;
+            male_idx             = i;
             break;
         case GIRLS:
             female_student_count = i;
@@ -437,6 +479,13 @@ void DB_Controller::fill_float_array(db_gender gen, database db)
     while(std::getline(reader, curr_line))
     {
         hrs = ::atof(curr_line.c_str());
+
+        if( ( hrs < 0 ) || ( hrs > MAX_FLOAT_VAL ) )
+        {
+            qDebug("> Error reading float value!");
+            hrs = 0;
+        }
+
         switch(db)
         {
         case TIME_COMPLETE:
@@ -444,6 +493,10 @@ void DB_Controller::fill_float_array(db_gender gen, database db)
             break;
         case TIME_REQUIRED:
             student_req_hours[i] = hrs;
+            break;
+        case TIME_DEDUCTED:
+            qDebug("Reading deduction: %d", hrs);
+            student_deductions[i] = hrs;
             break;
         }
 
@@ -499,7 +552,12 @@ void DB_Controller::write_to_file(db_gender gen, database db)
         }
         case TIME_REQUIRED:
         {
-            writer << db_write[ idx ]->get_hours_required() << "\n";
+            writer << db_write[ idx ]->get_base_hours() << "\n";
+            break;
+        }
+        case TIME_DEDUCTED:
+        {
+            writer << db_write[ idx ]->get_deductions() << "\n";
             break;
         }
         case SETTINGS:
@@ -524,22 +582,27 @@ void DB_Controller::populate_student_information()
     student_req_hours = new float[male_student_count];
     fill_float_array(GUYS, TIME_REQUIRED);
 
+    student_deductions = new float[male_student_count];
+    fill_float_array(GUYS, TIME_DEDUCTED);
+
     student_cmplt_hours = new float[male_student_count];
     fill_float_array(GUYS, TIME_COMPLETE);
 
     ptr_db_students_male = new Student*[male_student_count];
     active_db = ptr_db_students_male;
 
-    DB_Controller::populate_student_names(GUYS);
-    DB_Controller::populate_student_card_numbers(GUYS);
-    DB_Controller::populate_student_required_hours(GUYS);
-    DB_Controller::populate_student_completed_hours(GUYS);
+    populate_student_names(GUYS);
+    populate_student_card_numbers(GUYS);
+    populate_student_required_hours(GUYS);
+    populate_student_completed_hours(GUYS);
+    populate_student_deductions(GUYS);
 
     qDebug("> Male information populated");
 
     delete[] student_names;
     delete[] student_card_numbers;
     delete[] student_req_hours;
+    delete[] student_deductions;
     delete[] student_cmplt_hours;
 
     student_names = new std::string[1000];
@@ -551,20 +614,25 @@ void DB_Controller::populate_student_information()
     student_req_hours = new float[female_student_count];
     fill_float_array(GIRLS, TIME_REQUIRED);
 
+    student_deductions = new float[female_student_count];
+    fill_float_array(GIRLS, TIME_DEDUCTED);
+
     student_cmplt_hours = new float[female_student_count];
     fill_float_array(GIRLS, TIME_COMPLETE);
 
     ptr_db_students_female = new Student*[female_student_count];
     active_db = ptr_db_students_female;
 
-    DB_Controller::populate_student_names(GIRLS);
-    DB_Controller::populate_student_card_numbers(GIRLS);
-    DB_Controller::populate_student_required_hours(GIRLS);
-    DB_Controller::populate_student_completed_hours(GIRLS);
+    populate_student_names(GIRLS);
+    populate_student_card_numbers(GIRLS);
+    populate_student_required_hours(GIRLS);
+    populate_student_completed_hours(GIRLS);
+    populate_student_deductions(GIRLS);
 
     delete[] student_names;
     delete[] student_card_numbers;
     delete[] student_req_hours;
+    delete[] student_deductions;
     delete[] student_cmplt_hours;
 
     qDebug("> Female information populated");
@@ -620,6 +688,7 @@ void DB_Controller::populate_student_required_hours(db_gender gen)
         count = female_student_count;
         break;
     }
+
     for(int i = 0; i < count; i++)
     {
         active_db[i]->set_hours_required(student_req_hours[i]);
@@ -642,6 +711,25 @@ void DB_Controller::populate_student_completed_hours(db_gender gen)
     for(int i = 0; i < count; i++)
     {
         active_db[i]->set_hours_complete(student_cmplt_hours[i]);
+    }
+}
+
+void DB_Controller::populate_student_deductions(db_gender gen)
+{
+    int count;
+    switch(gen)
+    {
+    case GUYS:
+        count = male_student_count;
+        break;
+    case GIRLS:
+        count = female_student_count;
+        break;
+    }
+
+    for( int i = 0; i < count; i++ )
+    {
+        active_db[i]->set_deductions(student_deductions[i]);
     }
 }
 
@@ -672,11 +760,15 @@ void DB_Controller::resize_db()
 
     if( active_db == ptr_db_students_male)
     {
+        delete[] ptr_db_students_male;
+
         ptr_db_students_male = ptr_temp;
         active_db = ptr_db_students_male;
     }
     else if( active_db == ptr_db_students_female)
     {
+        delete[] ptr_db_students_female;
+
         ptr_db_students_female = ptr_temp;
         active_db = ptr_db_students_female;
     }
@@ -742,21 +834,82 @@ void DB_Controller::save_student_data()
     }
 }
 
-void DB_Controller::generate_daily_report()
+void DB_Controller::generate_daily_report(db_gender gen)
 {
-    daily_report = new std::string[*active_idx + FORMATTING_LINES];
+    daily_report = new std::string[ *active_idx + FORMATTING_LINES ];
 }
 
 void DB_Controller::generate_weekly_report()
 {
+    std::ofstream    writer;
+    std::string      output_file;
+    std::string      *weekly_report;
+    QString          begin_date;
+    QString          end_date;
+    std::string      date;
+    QDate            end;
+    int              idx;
 
+    end            = QDate::currentDate();
+    end_date       = QDate::currentDate().toString();
+    begin_date     = end.addDays( (qint64)(-7) ).toString();
+    output_file    = report_path + frat_name + "_week_" + "_" + begin_date.toStdString() + "_to_" + end_date.toStdString();
+    date           = begin_date.toStdString() + " - " + end_date.toStdString();
+    writer.open( output_file.c_str() );
+
+    qDebug("> Output file: %s", output_file.c_str());
+    qDebug("> Generating male weekly report");
+    weekly_report = new std::string[ male_idx + FORMATTING_LINES ];
+
+    weekly_report[0] = weekly_report_header[0];
+    weekly_report[1] = weekly_report_header[1];
+    weekly_report[2] = weekly_report_header[2];
+    weekly_report[3] = weekly_report_header[3];
+
+    weekly_report[3] = weekly_report[3] + frat_name;
+    for(idx = 0; idx < REPORT_HEADER_END_LENGTH - frat_name.length(); idx++)
+    {
+        weekly_report[3] = weekly_report[3] + " ";
+    }
+    weekly_report[3] = weekly_report[3] + "||\n";
+
+    weekly_report[4] = weekly_report_header[4] + date;
+    for( idx = 0; idx , REPORT_HEADER_END_LENGTH - date.length(); idx++ )
+    {
+        weekly_report[4] = weekly_report[4] + " ";
+    }
+    weekly_report[4] = weekly_report[4] + "||\n";
+
+
+
+
+    clear_deductions();
 }
 
+void DB_Controller::clear_deductions()
+{
+    int idx;
 
-void DB_Controller::write_daily_report(const char *abs_file_path)
+    for( idx = 0; idx < male_idx; idx++)
+    {
+        ptr_db_students_male[idx]->set_deductions( 0 );
+    }
+
+    qDebug("> Male deductions cleared");
+
+    for( idx = 0; idx < female_idx; idx++ )
+    {
+        ptr_db_students_female[idx]->set_deductions( 0 );
+    }
+
+    qDebug("> Female deductions cleared");
+}
+
+void DB_Controller::write_report(const char *abs_file_path, std::string *report)
 {
 
 }
+
 
 
 

@@ -32,6 +32,7 @@ public:
         CWID,
         TIME_COMPLETE,
         TIME_REQUIRED,
+        TIME_DEDUCTED,
         DB_COUNT
     };
 
@@ -73,8 +74,13 @@ public:
 
     std::string get_name_from_index(int i);
     std::string get_card_num_from_index(int i);
+
     float get_hours_req_from_index(int i);
     float get_hours_comp_from_index(int i);
+
+    float get_hours_deducted_from_index(int i);
+    void  set_hours_deducted_from_index(int i, float deductions);
+
     bool  get_status_from_index(int i);
     void  toggle_status_from_index(int i);
 
@@ -84,10 +90,6 @@ private:
     Student **ptr_db_students_male;
     Student **ptr_db_students_female;
     Student **active_db;
-
-    float    *base_time_male;
-    float    *base_time_female;
-    float    *active_base_time;
 
     int *active_count;
     int *active_idx;
@@ -103,13 +105,12 @@ private:
 
     std::string guy_db;
     std::string girl_db;
+    std::string frat_name;
+    std::string sor_name;
     std::string report_path;
 
     float girl_fine;
     float guy_fine;
-
-    db_gender gender;
-    db_type type;
 
     std::string *daily_report;
     std::string *weekly_report;
@@ -118,11 +119,12 @@ private:
     std::string *student_names;
     std::string *student_card_numbers;
     float       *student_req_hours;
+    float       *student_deductions;
     float       *student_cmplt_hours;
 
     bool        is_active;
 
-    static const std::string weekly_report_header[20];
+    static const std::string weekly_report_header[27];
 
     void initialize_db_controller();
 
@@ -145,6 +147,7 @@ private:
     void populate_student_card_numbers(db_gender gen);
     void populate_student_required_hours(db_gender gen);
     void populate_student_completed_hours(db_gender gen);
+    void populate_student_deductions(db_gender gen);
 
     void sort_db(DB_Sort::sort_by type, db_gender gen);
 
@@ -154,11 +157,11 @@ private:
     void clock_out_from_idx(int i);
     void save_student_data();
 
-    void generate_daily_report();
+    void generate_daily_report(db_gender gen);
     void generate_weekly_report();
+    void clear_deductions();
 
-    void write_daily_report(const char *abs_file_path);
-    void write_weekly_report(const char *abs_file_path);
+    void write_report(const char *abs_file_path, std::string *report);
 
 };
 

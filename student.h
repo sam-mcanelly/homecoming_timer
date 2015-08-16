@@ -30,7 +30,9 @@ private:
     char            *l_name;
     std::string     card_number;
     float           hours_required;
+    float           hours_deducted;
     float           hours_complete;
+    float           hours_day_total;
     bool            status;
     bool            names_computed;
     QTime           *timer;
@@ -47,6 +49,11 @@ public:
 
     float get_hours_required() const;
     void set_hours_required(float new_hours_complete);
+
+    float get_base_hours() const;
+
+    float get_deductions() const;
+    void  set_deductions(float deductions);
 
     bool get_status() const;
     void set_status(bool new_status);
@@ -67,6 +74,7 @@ public:
     QTime *get_timer() const;
     void clock_in();
     void clock_out();
+    float get_current_complete_time();
 
     void output_debug_info();
 

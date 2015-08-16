@@ -20,8 +20,13 @@ Student::Student()
 
 Student::Student(std::string _name)
 {
-    name           = _name;
-    names_computed = false;
+    name             = _name;
+    names_computed   = false;
+    card_number      = "";
+    hours_required   =  0;
+    hours_complete   =  0;
+    hours_deducted   =  0;
+    hours_day_total  =  0;
 
     //storing the first name and last name for sorting purposes
     compute_names();
@@ -37,11 +42,12 @@ Student::Student(std::string _name, std::string _card_num, float _hours_req)
     card_number      = _card_num;
     hours_required   = _hours_req;
     hours_complete   =  0;
+    hours_deducted   =  0;
+    hours_day_total  =  0;
 
     compute_names();
 
     status = false;
-
 }
 
 Student::~Student()
@@ -93,6 +99,7 @@ void Student::compute_names()
     const char * temp = name.c_str();
     int count = 0;
     int start_of_l_name;
+
     while (*temp != ' ')
     {
         count++;
@@ -122,12 +129,27 @@ void Student::compute_names()
 
 float Student::get_hours_required() const
 {
-    return hours_required;
+    return hours_required - hours_deducted;
 }
 
 void Student::set_hours_required(float hrs)
 {
     hours_required = hrs;
+}
+
+float Student::get_base_hours() const
+{
+    return hours_required;
+}
+
+float Student::get_deductions() const
+{
+    return hours_deducted;
+}
+
+void Student::set_deductions(float deductions)
+{
+    hours_deducted = deductions;
 }
 
 bool Student::get_status() const
@@ -156,7 +178,7 @@ void Student::toggle_status()
 
 float Student::get_hours_complete() const
 {
-    return hours_complete;
+    return hours_complete + hours_day_total;
 }
 
 void Student::set_hours_complete(float new_hours_complete)
@@ -166,7 +188,7 @@ void Student::set_hours_complete(float new_hours_complete)
 
 void Student::increment_hours_complete(float addition)
 {
-    hours_complete += addition;
+    hours_day_total += addition;
 }
 
 std::string Student::get_name() const

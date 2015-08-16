@@ -168,6 +168,7 @@ MainWindow::~MainWindow()
     {
         controller->end();
     }
+
     qDebug("> Deleting database controller memory...");
     delete controller;
     qDebug("> Database controller memory deleted");
@@ -278,7 +279,6 @@ void MainWindow::on_btn_clk_in_out_clicked()
 
 void MainWindow::on_combo_db_selection_currentIndexChanged(int index)
 {
-    qDebug("> Ooooooga boooooga");
     if (!init)
     {
        controller->begin();
@@ -342,7 +342,10 @@ void MainWindow::on_btn_add_clicked()
 void MainWindow::on_btn_sort_clicked()
 {
     if (!init)
+    {
         return;
+    }
+
     controller->sort( (DB_Sort::sort_by)ui->combo_sort_by->currentIndex() );
     refresh_student_lists();
 }
@@ -361,6 +364,11 @@ void MainWindow::on_txt_cwid_name_textChanged(const QString &arg1)
 
 void MainWindow::on_btn_delete_clicked()
 {
+    if( !init )
+    {
+        return;
+    }
+
     /*----------------------------
      * This action is costly
      * Use it sparingly
@@ -437,4 +445,15 @@ void MainWindow::on_txt_add_card_textChanged(const QString &arg1)
 
     ui->txt_add_name->setText( final_name );
 
+}
+
+void MainWindow::on_btn_deduction_clicked()
+{
+    if( !init )
+    {
+        return;
+    }
+
+    controller->set_hours_deducted_from_index(ui->list_name->currentRow(), ::atof(ui->spin_deductions->text().toStdString().c_str() ) );
+    refresh_student_lists();
 }

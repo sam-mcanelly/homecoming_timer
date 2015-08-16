@@ -39,6 +39,8 @@ void SetupWizard::on_SetupWizard_accepted()
     dir.cdUp();
     dir.mkdir("reports");
     my_settings << dir.absolutePath().toStdString() << "/reports/" << "\n";
+    my_settings << guy_db.toStdString();
+    my_settings << girl_db.toStdString();
     my_settings.close();
 }
 

@@ -322,6 +322,11 @@
       </item>
       <item>
        <property name="text">
+        <string>Hours Incomplete</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
         <string>Status</string>
        </property>
       </item>

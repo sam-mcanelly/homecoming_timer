@@ -892,6 +892,8 @@ void DB_Controller::generate_weekly_report()
         weekly_report[idx] = weekly_report_header[idx];
     }
 
+    weekly_report[idx]
+
 
 
     clear_deductions();

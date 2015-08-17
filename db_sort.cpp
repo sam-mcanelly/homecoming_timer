@@ -26,6 +26,9 @@ void DB_Sort::sort(Student **s_ptr, sort_by attribute, int low, int high)
     case ( TIME_REQUIRED ):
         j = partition_by_hours_required(s_ptr, low, high);
         break;
+    case ( TIME_INCOMPLETE ):
+        j = partition_by_hours_incomplete(s_ptr, low, high);
+        break;
     case ( STATUS ):
         j = partition_by_status(s_ptr, low, high);
         break;
@@ -147,6 +150,35 @@ int DB_Sort::partition_by_hours_required(Student **s_ptr, int low, int high)
         while(s_ptr[++i]->get_hours_required() < v->get_hours_required())
             if (i == high)  break;
         while(v->get_hours_required() < s_ptr[--j]->get_hours_required())
+            if ( j == low )   break;
+        if ( i >= j ) break;
+
+        temp = s_ptr[i];
+        s_ptr[i] = s_ptr[j];
+        s_ptr[j] = temp;
+    }
+
+    s_ptr[low] = s_ptr[j];
+    s_ptr[j] = v;
+
+    return j;
+}
+
+int DB_Sort::partition_by_hours_incomplete(Student **s_ptr, int low, int high)
+{
+    //partitions into s_ptr[low ... i-1], s_ptr[j], and a[i+1 ... high]
+
+
+    int i = low;                                //left scan index
+    int j = high + 1;                           //right scan index
+    Student *v = s_ptr[low];                    //partitioning item
+    Student *temp;
+
+    while (true)
+    {
+        while(s_ptr[++i]->get_hours_incomplete() < v->get_hours_incomplete())
+            if (i == high)  break;
+        while(v->get_hours_incomplete() < s_ptr[--j]->get_hours_incomplete())
             if ( j == low )   break;
         if ( i >= j ) break;
 

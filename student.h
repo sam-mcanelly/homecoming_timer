@@ -60,6 +60,7 @@ public:
     void toggle_status();
 
     float get_hours_complete() const;
+    float get_hours_incomplete() const;
     void set_hours_complete(float hrs);
     void increment_hours_complete(float addition);
 

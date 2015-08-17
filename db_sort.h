@@ -13,6 +13,7 @@ public:
         F_NAME,
         TIME_COMPLETE,
         TIME_REQUIRED,
+        TIME_INCOMPLETE,
         STATUS
     };
 
@@ -29,6 +30,7 @@ private:
 
     static int partition_by_hours_complete(Student **s_ptr, int low, int high);
     static int partition_by_hours_required(Student **s_ptr, int low, int high);
+    static int partition_by_hours_incomplete(Student **s_ptr, int low, int high);
 
     static int partition_by_status(Student **s_ptr, int low, int high);
 

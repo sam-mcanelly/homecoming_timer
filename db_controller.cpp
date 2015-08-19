@@ -18,38 +18,34 @@
  *          LITERAL CONSTANTS
  * -------------------------------------------*/
 
-#define FORMATTING_LINES            26
-#define REPORT_HEADER_END_LENGTH    33
-#define REPORT_STUDENT_NAME_LENGTH  23
-#define REPORT_STUDNET_HOURS_LENGTH 15
-#define REPORT_STUDENT_FINE_LENGTH  24
+#define FORMATTING_LINES            20
+#define REPORT_HEADER_END_LENGTH    42
+#define REPORT_STUDENT_NAME_LENGTH  22
+#define REPORT_STUDENT_HOURS_LENGTH 18
+#define REPORT_STUDENT_FINE_LENGTH  19
 #define MAX_FLOAT_VAL               100
 
-const std::string DB_Controller::weekly_report_header[] ={ "+==================================================================+\n",
-                                                           "||                 Homecoming Time Weekly Report                   ||\n",
-                                                           "||      =====================================================      ||\n",
-                                                           "||					        House:",
-                                                           "||                           Date:",
-                                                           "||                  Fine Per Hour:",
-                                                           "||                                                                 ||\n",
-                                                           "||       =====================================================     ||\n",
-                                                           "||                                                                 ||\n",
-                                                           "||              Copyright © 2015 Sam McAnelly                      ||\n",
-                                                           "||                                                                 ||\n",
-                                                           "+==================================================================+\n",
-                                                           "                                                                    \n",
-                                                           "+==================================================================+\n",
-                                                           "+                 Students With Incomplete Hours                   +\n",
-                                                           "+    =======================================================       +\n",
-                                                           "+ Name                  || Hours         || Fine Amount            +\n",
-                                                           "+##################################################################+\n",
-                                                           "+                       ||               ||                        +\n",
-                                                           "+==================================================================+\n",
-                                                           "+                   Students Exceeding Hours                       +\n",
-                                                           "+    =======================================================       +\n",
-                                                           "+ Name                  || Hours         || Fine Amount            +\n",
-                                                           "+##################################################################+\n",
-                                                           "+                       ||               ||                        +\n"};
+const std::string DB_Controller::weekly_report_header[] ={ "+==================================================================+",
+                                                           "||                 Homecoming Time Weekly Report                  ||",
+                                                           "||      =====================================================     ||",
+                                                           "||                                                                ||",
+                                                           "||                House:",
+                                                           "||                 Date:",
+                                                           "||        Fine Per Hour:",
+                                                           "||                                                                ||",
+                                                           "||       =====================================================    ||",
+                                                           "||                                                                ||",
+                                                           "||              Copyright © 2015 Sam McAnelly                     ||",
+                                                           "||                                                                ||",
+                                                           "+==================================================================+",
+                                                           "                                                                    ",
+                                                           "+==================================================================+",
+                                                           "+                      Student Time Sheet                          +",
+                                                           "+    =======================================================       +",
+                                                           "+ Name                  || Hours             || Fine Amount        +",
+                                                           "+##################################################################+",
+                                                           "+                       ||                   ||                    +",
+                                                           "+==================================================================+" };
 
 /*------------------------------------------------
  *          PUBLIC FUNCTION DEFINITIONS
@@ -314,6 +310,145 @@ void DB_Controller::sort(DB_Sort::sort_by sortby)
     DB_Sort::sort(active_db, *active_idx , sortby);
 }
 
+void DB_Controller::generate_daily_report(db_gender gen)
+{
+    daily_report = new std::string[ *active_idx + FORMATTING_LINES ];
+}
+
+void DB_Controller::generate_weekly_report()
+{
+    std::ofstream     writer;
+    std::string       output_file;
+    std::string       *weekly_report;
+    std::string       date;
+    std::string       curr_name;
+    std::string       time_string;
+    QString           curr_time_complete;
+    QString           curr_time_required;
+    QString           fine_string;
+    QString           fine;
+    QString           begin_date;
+    QString           end_date;
+    QDate             end;
+    int               idx;
+    int               stud_idx;
+    float             fine_amnt;
+
+    end                = QDate::currentDate();
+    end_date           = QDate::currentDate().toString();
+    begin_date         = end.addDays( (qint64)(-7) ).toString();
+    output_file        = report_path + frat_name + "_week_" + "_" + begin_date.toStdString() + "_to_" + end_date.toStdString();
+    date               = begin_date.toStdString() + " - " + end_date.toStdString();
+    fine               = QString::number(guy_fine);
+    stud_idx           = 0;
+    curr_name          = "";
+    writer.open( output_file.c_str() );
+
+    qDebug("> Output file: %s", output_file.c_str());
+    qDebug("> Generating male weekly report");
+    weekly_report = new std::string[ male_idx + FORMATTING_LINES ];
+
+    weekly_report[0] = weekly_report_header[0];
+    weekly_report[1] = weekly_report_header[1];
+    weekly_report[2] = weekly_report_header[2];
+
+    weekly_report[3] = weekly_report_header[3] + frat_name;
+    for( idx = 0; idx < REPORT_HEADER_END_LENGTH - frat_name.length(); idx++ )
+    {
+        weekly_report[3] = weekly_report[3] + " ";
+    }
+    weekly_report[3] = weekly_report[3] + "||";
+
+    weekly_report[4] = weekly_report_header[4] + date;
+    for( idx = 0; idx < REPORT_HEADER_END_LENGTH - date.length(); idx++ )
+    {
+        weekly_report[4] = weekly_report[4] + " ";
+    }
+    weekly_report[4] = weekly_report[4] + "||";
+
+    weekly_report[5] = weekly_report_header[5] + fine.toStdString();
+    for( idx = 0; idx < REPORT_HEADER_END_LENGTH - fine.length(); idx++ )
+    {
+        weekly_report[5] = weekly_report[5] + " ";
+    }
+    weekly_report[5] = weekly_report[5] + "||";
+
+    for( idx = 6; idx < 18; idx++ )
+    {
+        weekly_report[idx] = weekly_report_header[idx];
+    }
+
+    //Fill in the plus sign at the beginning of the line
+    for( idx = 18; idx < ( male_idx + FORMATTING_LINES - 1 ); idx++ )
+    {
+        weekly_report[idx] = "+ ";
+    }
+
+    //Fill in the names of the students
+    for( idx = 18; idx < ( male_idx + FORMATTING_LINES - 1); idx++ )
+    {
+        curr_name = ptr_db_students_male[ stud_idx++ ]->get_name();
+        weekly_report[idx] += curr_name;
+
+        //Add the space formatting
+        for( int i = 0; i < (REPORT_STUDENT_NAME_LENGTH - curr_name.length()); i++)
+        {
+            weekly_report[idx] += " ";
+        }
+
+        weekly_report[idx] += "|| ";
+    }
+
+    stud_idx = 0;
+
+    //Fill in the hours of the students
+    for( idx = 18; idx < ( male_idx + FORMATTING_LINES - 1); idx++ )
+    {
+        curr_time_complete.sprintf("%5.2f", ptr_db_students_male[ stud_idx ]->get_hours_complete());
+        curr_time_required.sprintf("%5.2f", ptr_db_students_male[ stud_idx ]->get_hours_required());
+        stud_idx++;
+        time_string = curr_time_complete.toStdString() + "/" + curr_time_required.toStdString();
+        weekly_report[ idx ] += time_string;
+
+        //Add the space formatting
+        for( int i = 0; i < (REPORT_STUDENT_HOURS_LENGTH - time_string.length()); i++)
+        {
+            weekly_report[idx] += " ";
+        }
+
+        weekly_report[idx] += "|| ";
+    }
+
+    stud_idx = 0;
+
+    //Fill in the fines of the students
+    for( idx = 18; idx < ( male_idx + FORMATTING_LINES - 1); idx++ )
+    {
+        fine_amnt = ptr_db_students_male[ stud_idx++ ]->get_hours_incomplete() * guy_fine;
+        fine_string.sprintf("%5.2f", fine_amnt);
+        weekly_report[ idx ] += fine_string.toStdString();
+
+        //Add the space formatting
+        for( int i = 0; i < (REPORT_STUDENT_FINE_LENGTH - fine_string.length()); i++)
+        {
+            weekly_report[idx] += " ";
+        }
+
+        weekly_report[idx] += "+";
+    }
+
+    weekly_report[ male_idx + FORMATTING_LINES - 1 ] = weekly_report_header[ 19 ];
+
+    for(int i = 0; i < (male_idx + FORMATTING_LINES); i++)
+    {
+        qDebug("%s", weekly_report[i].c_str());
+    }
+
+    write_report(output_file.c_str(), weekly_report, ( male_idx + FORMATTING_LINES ));
+
+    clear_deductions();
+}
+
 /*------------------------------------------------
  *          PRIVATE FUNCTION DEFINITIONS
  * -----------------------------------------------*/
@@ -494,7 +629,6 @@ void DB_Controller::fill_float_array(db_gender gen, database db)
             student_req_hours[i] = hrs;
             break;
         case TIME_DEDUCTED:
-            qDebug("Reading deduction: %d", hrs);
             student_deductions[i] = hrs;
             break;
         }
@@ -833,71 +967,7 @@ void DB_Controller::save_student_data()
     }
 }
 
-void DB_Controller::generate_daily_report(db_gender gen)
-{
-    daily_report = new std::string[ *active_idx + FORMATTING_LINES ];
-}
 
-void DB_Controller::generate_weekly_report()
-{
-    std::ofstream     writer;
-    std::string       output_file;
-    std::string       *weekly_report;
-    std::string       date;
-    QString           fine;
-    QString           begin_date;
-    QString           end_date;
-    QDate             end;
-    int               idx;
-
-    end             = QDate::currentDate();
-    end_date        = QDate::currentDate().toString();
-    begin_date      = end.addDays( (qint64)(-7) ).toString();
-    output_file     = report_path + frat_name + "_week_" + "_" + begin_date.toStdString() + "_to_" + end_date.toStdString();
-    date            = begin_date.toStdString() + " - " + end_date.toStdString();
-    fine            = QString::number(guy_fine);
-    writer.open( output_file.c_str() );
-
-    qDebug("> Output file: %s", output_file.c_str());
-    qDebug("> Generating male weekly report");
-    weekly_report = new std::string[ male_idx + FORMATTING_LINES ];
-
-    weekly_report[0] = weekly_report_header[0];
-    weekly_report[1] = weekly_report_header[1];
-    weekly_report[2] = weekly_report_header[2];
-
-    weekly_report[3] = weekly_report_header[3] + frat_name;
-    for( idx = 0; idx < REPORT_HEADER_END_LENGTH - frat_name.length(); idx++ )
-    {
-        weekly_report[3] = weekly_report[3] + " ";
-    }
-    weekly_report[3] = weekly_report[3] + "||\n";
-
-    weekly_report[4] = weekly_report_header[4] + date;
-    for( idx = 0; idx < REPORT_HEADER_END_LENGTH - date.length(); idx++ )
-    {
-        weekly_report[4] = weekly_report[4] + " ";
-    }
-    weekly_report[4] = weekly_report[4] + "||\n";
-
-    weekly_report[5] = weekly_report_header[5] + fine.toStdString();
-    for( idx = 0; idx < REPORT_HEADER_END_LENGTH - fine.length(); idx++ )
-    {
-        weekly_report[5] = weekly_report[5] + " ";
-    }
-    weekly_report[5] = weekly_report[5] + "||\n";
-
-    for( idx = 0; idx < 18; idx++ )
-    {
-        weekly_report[idx] = weekly_report_header[idx];
-    }
-
-    weekly_report[idx]
-
-
-
-    clear_deductions();
-}
 
 void DB_Controller::clear_deductions()
 {
@@ -918,9 +988,19 @@ void DB_Controller::clear_deductions()
     qDebug("> Female deductions cleared");
 }
 
-void DB_Controller::write_report(const char *abs_file_path, std::string *report)
+void DB_Controller::write_report(const char *abs_file_path, std::string *report, int size)
 {
+    int            idx;
+    std::ofstream  writer;
 
+    writer.open(abs_file_path);
+
+    for( idx = 0; idx < size; idx++ )
+    {
+        writer << report[idx] << "\n";
+    }
+
+    writer.close();
 }
 
 

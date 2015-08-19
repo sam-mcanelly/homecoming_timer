@@ -457,3 +457,11 @@ void MainWindow::on_btn_deduction_clicked()
     controller->set_hours_deducted_from_index(ui->list_name->currentRow(), ::atof(ui->spin_deductions->text().toStdString().c_str() ) );
     refresh_student_lists();
 }
+
+void MainWindow::on_btn_generate_report_clicked()
+{
+    if( !init )
+        return;
+
+    controller->generate_weekly_report();
+}

@@ -193,7 +193,7 @@ void Student::increment_hours_complete(float addition)
 
 float Student::get_hours_incomplete() const
 {
-    return hours_required - get_hours_complete();
+    return get_hours_required() - get_hours_complete();
 }
 
 std::string Student::get_name() const

@@ -84,6 +84,9 @@ public:
     bool  get_status_from_index(int i);
     void  toggle_status_from_index(int i);
 
+    void generate_daily_report(db_gender gen);
+    void generate_weekly_report();
+
     void sort(DB_Sort::sort_by sortby);
 
 private:
@@ -157,11 +160,9 @@ private:
     void clock_out_from_idx(int i);
     void save_student_data();
 
-    void generate_daily_report(db_gender gen);
-    void generate_weekly_report();
     void clear_deductions();
 
-    void write_report(const char *abs_file_path, std::string *report);
+    void write_report(const char *abs_file_path, std::string *report, int size);
 
 };
 

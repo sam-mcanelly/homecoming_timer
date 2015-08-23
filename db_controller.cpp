@@ -1019,6 +1019,7 @@ void DB_Controller::clear_deductions()
 
 void DB_Controller::write_report(const char *abs_file_path, std::string *report, int size)
 {
+    qDebug("> Writing report...");
     int            idx;
     std::ofstream  writer;
 
@@ -1030,6 +1031,7 @@ void DB_Controller::write_report(const char *abs_file_path, std::string *report,
     }
 
     writer.close();
+    qDebug("> Report written");
 }
 
 

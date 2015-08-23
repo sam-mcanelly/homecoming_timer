@@ -26,4 +26,5 @@ HEADERS  += mainwindow.h \
     setup_wizard.h
 
 FORMS    += mainwindow.ui \
-    setup_wizard.ui
+    setup_wizard.ui \
+    edit.ui

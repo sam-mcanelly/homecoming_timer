@@ -315,7 +315,7 @@ void DB_Controller::generate_daily_report(db_gender gen)
     daily_report = new std::string[ *active_idx + FORMATTING_LINES ];
 }
 
-void DB_Controller::generate_weekly_report()
+void DB_Controller::generate_weekly_report(db_gender gen)
 {
     std::ofstream     writer;
     std::string       output_file;
@@ -323,6 +323,7 @@ void DB_Controller::generate_weekly_report()
     std::string       date;
     std::string       curr_name;
     std::string       time_string;
+    std::string       house_name;
     QString           curr_time_complete;
     QString           curr_time_required;
     QString           fine_string;
@@ -332,62 +333,65 @@ void DB_Controller::generate_weekly_report()
     QDate             end;
     int               idx;
     int               stud_idx;
+    int               report_size;
     float             fine_amnt;
 
     end                = QDate::currentDate();
     end_date           = QDate::currentDate().toString();
     begin_date         = end.addDays( (qint64)(-7) ).toString();
-    output_file        = report_path + frat_name + "_week_" + "_" + begin_date.toStdString() + "_to_" + end_date.toStdString();
+    output_file        = report_path + ( ( gen == GUYS ) ? frat_name : sor_name ) + "/" + ( ( gen == GUYS ) ? frat_name : sor_name ) + "_week_" + "_" + begin_date.toStdString() + "_to_" + end_date.toStdString();
     date               = begin_date.toStdString() + " - " + end_date.toStdString();
-    fine               = QString::number(guy_fine);
+    fine               = ( gen == GUYS ) ? QString::number(guy_fine) : QString::number(girl_fine);
     stud_idx           = 0;
     curr_name          = "";
+    house_name         = ( gen == GUYS ) ? frat_name : sor_name;
     writer.open( output_file.c_str() );
 
     qDebug("> Output file: %s", output_file.c_str());
-    qDebug("> Generating male weekly report");
-    weekly_report = new std::string[ male_idx + FORMATTING_LINES ];
+    report_size = ( ( gen == GUYS ) ? male_idx : female_idx ) + FORMATTING_LINES;
+    weekly_report = new std::string[ report_size ];
 
     weekly_report[0] = weekly_report_header[0];
     weekly_report[1] = weekly_report_header[1];
     weekly_report[2] = weekly_report_header[2];
+    weekly_report[3] = weekly_report_header[3];
 
-    weekly_report[3] = weekly_report_header[3] + frat_name;
-    for( idx = 0; idx < REPORT_HEADER_END_LENGTH - frat_name.length(); idx++ )
-    {
-        weekly_report[3] = weekly_report[3] + " ";
-    }
-    weekly_report[3] = weekly_report[3] + "||";
-
-    weekly_report[4] = weekly_report_header[4] + date;
-    for( idx = 0; idx < REPORT_HEADER_END_LENGTH - date.length(); idx++ )
+    weekly_report[4] = weekly_report_header[4] + house_name;
+    for( idx = 0; idx < REPORT_HEADER_END_LENGTH - house_name.length(); idx++ )
     {
         weekly_report[4] = weekly_report[4] + " ";
     }
     weekly_report[4] = weekly_report[4] + "||";
 
-    weekly_report[5] = weekly_report_header[5] + fine.toStdString();
-    for( idx = 0; idx < REPORT_HEADER_END_LENGTH - fine.length(); idx++ )
+    weekly_report[5] = weekly_report_header[5] + date;
+    for( idx = 0; idx < REPORT_HEADER_END_LENGTH - date.length(); idx++ )
     {
         weekly_report[5] = weekly_report[5] + " ";
     }
     weekly_report[5] = weekly_report[5] + "||";
 
-    for( idx = 6; idx < 18; idx++ )
+    weekly_report[6] = weekly_report_header[6] + fine.toStdString();
+    for( idx = 0; idx < REPORT_HEADER_END_LENGTH - fine.length(); idx++ )
+    {
+        weekly_report[6] = weekly_report[6] + " ";
+    }
+    weekly_report[6] = weekly_report[6] + "||";
+
+    for( idx = 7; idx < 19; idx++ )
     {
         weekly_report[idx] = weekly_report_header[idx];
     }
 
     //Fill in the plus sign at the beginning of the line
-    for( idx = 18; idx < ( male_idx + FORMATTING_LINES - 1 ); idx++ )
+    for( idx = 19; idx < ( report_size - 1 ); idx++ )
     {
         weekly_report[idx] = "+ ";
     }
 
     //Fill in the names of the students
-    for( idx = 18; idx < ( male_idx + FORMATTING_LINES - 1); idx++ )
+    for( idx = 19; idx < ( report_size - 1 ); idx++ )
     {
-        curr_name = ptr_db_students_male[ stud_idx++ ]->get_name();
+        curr_name = ( gen == GUYS ) ? ptr_db_students_male[ stud_idx++ ]->get_name() : ptr_db_students_female[ stud_idx++ ]->get_name();
         weekly_report[idx] += curr_name;
 
         //Add the space formatting
@@ -402,10 +406,19 @@ void DB_Controller::generate_weekly_report()
     stud_idx = 0;
 
     //Fill in the hours of the students
-    for( idx = 18; idx < ( male_idx + FORMATTING_LINES - 1); idx++ )
+    for( idx = 19; idx < ( report_size - 1 ); idx++ )
     {
-        curr_time_complete.sprintf("%5.2f", ptr_db_students_male[ stud_idx ]->get_hours_complete());
-        curr_time_required.sprintf("%5.2f", ptr_db_students_male[ stud_idx ]->get_hours_required());
+        if( gen == GUYS )
+        {
+            curr_time_complete.sprintf("%5.2f", ptr_db_students_male[ stud_idx ]->get_hours_complete());
+            curr_time_required.sprintf("%5.2f", ptr_db_students_male[ stud_idx ]->get_hours_required());
+        }
+        else
+        {
+            curr_time_complete.sprintf("%5.2f", ptr_db_students_female[ stud_idx ]->get_hours_complete());
+            curr_time_required.sprintf("%5.2f", ptr_db_students_female[ stud_idx ]->get_hours_required());
+        }
+
         stud_idx++;
         time_string = curr_time_complete.toStdString() + "/" + curr_time_required.toStdString();
         weekly_report[ idx ] += time_string;
@@ -422,10 +435,26 @@ void DB_Controller::generate_weekly_report()
     stud_idx = 0;
 
     //Fill in the fines of the students
-    for( idx = 18; idx < ( male_idx + FORMATTING_LINES - 1); idx++ )
+    for( idx = 19; idx < ( report_size - 1 ); idx++ )
     {
-        fine_amnt = ptr_db_students_male[ stud_idx++ ]->get_hours_incomplete() * guy_fine;
-        fine_string.sprintf("%5.2f", fine_amnt);
+        if( gen == GUYS )
+        {
+            fine_amnt = ptr_db_students_male[ stud_idx++ ]->get_hours_incomplete() * guy_fine;
+        }
+        else
+        {
+            fine_amnt = ptr_db_students_female[ stud_idx++ ]->get_hours_incomplete() * girl_fine;
+        }
+
+        if( fine_amnt <= 0 )
+        {
+            fine_string.sprintf("$0.00");
+        }
+        else
+        {
+            fine_string.sprintf("$%5.2f", fine_amnt);
+        }
+
         weekly_report[ idx ] += fine_string.toStdString();
 
         //Add the space formatting
@@ -437,14 +466,14 @@ void DB_Controller::generate_weekly_report()
         weekly_report[idx] += "+";
     }
 
-    weekly_report[ male_idx + FORMATTING_LINES - 1 ] = weekly_report_header[ 19 ];
+    weekly_report[ report_size - 1 ] = weekly_report_header[ 20 ];
 
-    for(int i = 0; i < (male_idx + FORMATTING_LINES); i++)
+    for(int i = 0; i < ( report_size ); i++)
     {
         qDebug("%s", weekly_report[i].c_str());
     }
 
-    write_report(output_file.c_str(), weekly_report, ( male_idx + FORMATTING_LINES ));
+    write_report(output_file.c_str(), weekly_report, report_size);
 
     clear_deductions();
 }

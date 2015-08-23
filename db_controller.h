@@ -85,7 +85,7 @@ public:
     void  toggle_status_from_index(int i);
 
     void generate_daily_report(db_gender gen);
-    void generate_weekly_report();
+    void generate_weekly_report(db_gender gen);
 
     void sort(DB_Sort::sort_by sortby);
 
@@ -127,7 +127,7 @@ private:
 
     bool        is_active;
 
-    static const std::string weekly_report_header[27];
+    static const std::string weekly_report_header[21];
 
     void initialize_db_controller();
 

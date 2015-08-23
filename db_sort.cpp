@@ -176,9 +176,9 @@ int DB_Sort::partition_by_hours_incomplete(Student **s_ptr, int low, int high)
 
     while (true)
     {
-        while(s_ptr[++i]->get_hours_incomplete() < v->get_hours_incomplete())
+        while(s_ptr[++i]->get_hours_incomplete() > v->get_hours_incomplete())
             if (i == high)  break;
-        while(v->get_hours_incomplete() < s_ptr[--j]->get_hours_incomplete())
+        while(v->get_hours_incomplete() > s_ptr[--j]->get_hours_incomplete())
             if ( j == low )   break;
         if ( i >= j ) break;
 

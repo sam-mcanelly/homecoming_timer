@@ -462,6 +462,8 @@ void MainWindow::on_btn_generate_report_clicked()
 {
     if( !init )
         return;
-
-    controller->generate_weekly_report();
+    qDebug("Generating male report...");
+    controller->generate_weekly_report(DB_Controller::GUYS);
+    qDebug("Generating female report...");
+    controller->generate_weekly_report(DB_Controller::GIRLS);
 }

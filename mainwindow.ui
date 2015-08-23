@@ -81,6 +81,9 @@
     </item>
     <item row="1" column="10" colspan="3">
      <widget class="QPushButton" name="btn_manual_edit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="text">
        <string>Edit</string>
       </property>
@@ -115,7 +118,7 @@
      </widget>
     </item>
     <item row="3" column="11">
-     <widget class="QLabel" name="lbl_CWID_5">
+     <widget class="QLabel" name="lbl_deductions">
       <property name="text">
        <string>Deductions</string>
       </property>
@@ -227,6 +230,9 @@
     </item>
     <item row="8" column="5" colspan="4">
      <widget class="QPushButton" name="btn_new_db">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="text">
        <string>New Timesheet</string>
       </property>

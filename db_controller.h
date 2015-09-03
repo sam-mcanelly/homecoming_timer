@@ -60,7 +60,7 @@ public:
     void begin();
     void end();
 
-    void add_student(std::string name, std::string card_num, float hours_req);
+    void add_student(std::string name, QString card_num, float hours_req);
     void delete_student(int index);
 
     void set_gender(db_gender gender);
@@ -89,10 +89,12 @@ public:
 
     void sort(DB_Sort::sort_by sortby);
 
+    void save();
+
 private:
-    Student **ptr_db_students_male;
-    Student **ptr_db_students_female;
-    Student **active_db;
+    Student ptr_db_students_male[500];
+    Student ptr_db_students_female[500];
+    Student *active_db;
 
     int *active_count;
     int *active_idx;
@@ -119,11 +121,12 @@ private:
     std::string *weekly_report;
     std::string *settings;
 
-    std::string *student_names;
-    std::string *student_card_numbers;
-    float       *student_req_hours;
-    float       *student_deductions;
-    float       *student_cmplt_hours;
+    std::string  student_names[500];
+    QString      student_card_numbers[500];
+    float        student_cmplt_hours[500];
+    float        student_req_hours[500];
+    float        student_deductions[500];
+
 
     bool        is_active;
 
@@ -136,7 +139,7 @@ private:
     void load_base_time(db_gender gen);
     void save_base_time(db_gender gen);
 
-    const char *compute_db(db_gender gen, database db);
+    std::string compute_db(db_gender gen, database db);
     void compute_report_output(db_gender gen, report_type type);
 
     void fill_string_array(db_gender gen, database db);

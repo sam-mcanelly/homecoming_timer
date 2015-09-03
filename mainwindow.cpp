@@ -200,6 +200,7 @@ void MainWindow::on_list_name_currentRowChanged(int currentRow)
     bar = ui->list_name->verticalScrollBar();
     bar->setValue(scroll_index);
 
+    qDebug("> Getting name from index: %d", ui->list_name->currentRow());
     ui->txt_cwid_name->setText(QString::fromStdString(controller->get_name_from_index(ui->list_name->currentRow())));
 }
 
@@ -243,10 +244,8 @@ void MainWindow::on_btn_clk_in_out_clicked()
     if(name.compare("") == 0)
     {
         controller->toggle_status_from_index(index);
-        fill_status_list();
-        if(!controller->get_status_from_index(index))
-            fill_hours_complete_list();
         ui->list_name->setCurrentRow(index);
+        refresh_student_lists();
     }
     else
     {
@@ -262,8 +261,6 @@ void MainWindow::on_btn_clk_in_out_clicked()
         else
         {
             controller->toggle_status_from_index(index);
-            fill_status_list();
-            fill_hours_complete_list();
 
             /*----------------------------------------------
              *     Reset all rows to the appropriate
@@ -275,6 +272,12 @@ void MainWindow::on_btn_clk_in_out_clicked()
             ui->list_status->setCurrentRow(index);
         }
     }
+
+    /*------------------------
+     * save student data
+     * ----------------------*/
+    controller->save();
+    refresh_student_lists();
 }
 
 void MainWindow::on_combo_db_selection_currentIndexChanged(int index)
@@ -328,7 +331,7 @@ void MainWindow::on_btn_add_clicked()
         return;
     }
 
-    controller->add_student(ui->txt_add_name->text().toStdString(), ui->txt_add_card->text().toStdString(), ::atof(ui->combo_hours_req->currentText().toStdString().c_str()));
+    controller->add_student(ui->txt_add_name->text().toStdString(), ui->txt_add_card->text(), ::atof(ui->combo_hours_req->currentText().toStdString().c_str()));
     refresh_student_lists();
 
     /*------------------------
@@ -337,6 +340,10 @@ void MainWindow::on_btn_add_clicked()
     ui->txt_add_card->clear();
     ui->txt_add_name->clear();
 
+    /*------------------------
+     * save student data
+     * ----------------------*/
+    controller->save();
 }
 
 void MainWindow::on_btn_sort_clicked()
@@ -375,6 +382,7 @@ void MainWindow::on_btn_delete_clicked()
      * -------------------------*/
     controller->delete_student(ui->list_name->currentRow());
     refresh_student_lists();
+    controller->save();
 }
 
 void MainWindow::on_txt_add_card_textChanged(const QString &arg1)
@@ -388,13 +396,13 @@ void MainWindow::on_txt_add_card_textChanged(const QString &arg1)
     QString first_name;
     QString last_name;
     QString final_name;
-    const char*   name;
+    std::string   name;
     int     idx;
 
     idx = 0;
-    name = arg1.toStdString().c_str();
+    name = arg1.toStdString();
 
-    qDebug("%s", name);
+    //qDebug("> Card number: %s", name.c_str());
 
     /*----------------------------
      * Generate the name from the
@@ -456,6 +464,7 @@ void MainWindow::on_btn_deduction_clicked()
 
     controller->set_hours_deducted_from_index(ui->list_name->currentRow(), ::atof(ui->spin_deductions->text().toStdString().c_str() ) );
     refresh_student_lists();
+    controller->save();
 }
 
 void MainWindow::on_btn_generate_report_clicked()
@@ -466,4 +475,16 @@ void MainWindow::on_btn_generate_report_clicked()
     controller->generate_weekly_report(DB_Controller::GUYS);
     qDebug("Generating female report...");
     controller->generate_weekly_report(DB_Controller::GIRLS);
+}
+
+void MainWindow::on_btn_save_data_clicked()
+{
+    if( !init )
+    {
+        return;
+    }
+
+    controller->save();
+    refresh_student_lists();
+
 }

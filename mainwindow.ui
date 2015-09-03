@@ -80,12 +80,12 @@
      </widget>
     </item>
     <item row="1" column="10" colspan="3">
-     <widget class="QPushButton" name="btn_manual_edit">
+     <widget class="QPushButton" name="btn_save_data">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="text">
-       <string>Edit</string>
+       <string>Save All</string>
       </property>
      </widget>
     </item>
@@ -281,6 +281,26 @@
      <widget class="QComboBox" name="combo_hours_req">
       <item>
        <property name="text">
+        <string>2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>2.5</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>3.5</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
         <string>4</string>
        </property>
       </item>
@@ -429,7 +449,7 @@
      <x>0</x>
      <y>0</y>
      <width>1180</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHomecoming_Time_v0_02">

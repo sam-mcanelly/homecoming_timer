@@ -58,23 +58,7 @@ DB_Controller::DB_Controller()
 
 DB_Controller::~DB_Controller()
 {
-    if( is_active )
-    {
-        int idx;
 
-        for( idx = 0; idx < male_idx; idx++ )
-        {
-            delete ptr_db_students_male[ idx ];
-        }
-
-        for( idx = 0; idx < female_idx; idx++ )
-        {
-            delete ptr_db_students_female[ idx ];
-        }
-
-        delete[] ptr_db_students_male;
-        delete[] ptr_db_students_female;
-    }
 }
 
 void DB_Controller::begin()
@@ -102,7 +86,7 @@ void DB_Controller::set_gender(db_gender gen)
         active_idx     = &male_idx;
         break;
     case GIRLS:
-        active_db = ptr_db_students_female;
+        active_db      = ptr_db_students_female;
         active_count   = &female_student_count;
         active_idx     = &female_idx;
         break;
@@ -119,65 +103,27 @@ void DB_Controller::generate_report(report_type type)
 
 }
 
-void DB_Controller::add_student(std::string name, std::string card_num, float hours_req)
+void DB_Controller::add_student(std::string name, QString card_num, float hours_req)
 {
-    if( *active_idx == *active_count )
+    if( *active_idx == 499 )
     {
-        resize_db();
-        qDebug("> Database resized: [ new size ] - %d", *active_count);
+        return;
     }
-    active_db[ (*active_idx)++ ] = new Student(name, card_num, hours_req);
+    qDebug("> FUCKING ACTIVE_IDX BITCH: %d", *active_idx);
+    active_db[ (*active_idx) ].set_name(name);
+    active_db[ (*active_idx) ].set_card_number(card_num);
+    active_db[ (*active_idx) ].set_deductions(0.0);
+    active_db[ (*active_idx) ].set_hours_complete(0.0);
+    active_db[ (*active_idx) ].set_status(false);
+    active_db[ (*active_idx)++ ].set_hours_required(hours_req);
     qDebug("> New student created at: %d", ( *active_idx - 1 ) );
+
+    sort(DB_Sort::L_NAME);
 }
 
 void DB_Controller::delete_student(int index)
 {
-    if( ( index < 0 ) && ( index >= *active_idx ))
-    {
-        return;
-    }
-    else if( index == ( *active_idx - 1 ) )
-    {
-        qDebug("> Last student deleted. No need to shrink array");
-        delete active_db[ --(*active_idx) ];
-        return;
-    }
 
-    Student **new_db;
-    int       idx;
-    int       sub;
-
-    sub             = 0;
-    *active_count  -= 1;
-    new_db          = new Student*[ *active_count ];
-
-    for( idx = 0; idx < *active_idx; idx++ )
-    {
-        if( idx == index  )
-        {
-            sub = -1;
-            delete active_db[ idx ];
-            continue;
-        }
-        new_db[ idx + sub ] = active_db[ idx ];
-    }
-
-    *active_idx -= 1;
-
-    if( active_db == ptr_db_students_male )
-    {
-        delete[] ptr_db_students_male;
-
-        ptr_db_students_male = new_db;
-        active_db            = ptr_db_students_male;
-    }
-    else if( active_db == ptr_db_students_female )
-    {
-        delete[] ptr_db_students_female;
-
-        ptr_db_students_female = new_db;
-        active_db              = ptr_db_students_female;
-    }
 }
 
 int DB_Controller::search_name(std::string name)
@@ -191,7 +137,7 @@ int DB_Controller::search_name(std::string name)
     std::string name_from_array;
     for(int i = 0; i < *active_idx; i++)
     {
-        name_from_array = active_db[i]->get_name();
+        name_from_array = active_db[i].get_name();
         for (std::string::iterator i = name_from_array.begin(); i != name_from_array.end(); i++)
         {
             *i = tolower(*i);
@@ -209,7 +155,7 @@ int DB_Controller::search_card_number(std::string number)
     std::string num_from_array;
     for (int i = 0; i < *active_idx; i++)
     {
-        num_from_array = num_from_array = active_db[i]->get_card_number();
+        num_from_array = num_from_array = active_db[i].get_card_number();
         if(number.compare(num_from_array) == 0)
             return i;
     }
@@ -221,7 +167,7 @@ std::string DB_Controller::get_name_from_index(int i)
 {
     if( ( i > -1 ) && ( i < *active_idx ) )
     {
-        return active_db[i]->get_name();
+        return active_db[i].get_name();
     }
     else
     {
@@ -233,7 +179,7 @@ std::string DB_Controller::get_card_num_from_index(int i)
 {
     if( i > -1 && i < *active_idx)
     {
-        return active_db[i]->get_card_number();
+        return active_db[i].get_card_number();
     }
     else
     {
@@ -245,7 +191,7 @@ float DB_Controller::get_hours_req_from_index(int i)
 {
     if( i > -1 && i < *active_idx)
     {
-        return active_db[i]->get_hours_required();
+        return active_db[i].get_hours_required();
     }
     else
     {
@@ -257,7 +203,7 @@ float DB_Controller::get_hours_comp_from_index(int i)
 {
     if( i > -1 && i < *active_idx)
     {
-        return active_db[i]->get_hours_complete();
+        return active_db[i].get_hours_complete();
     }
     else
     {
@@ -269,7 +215,7 @@ float DB_Controller::get_hours_deducted_from_index(int i)
 {
     if( i > -1 && i < *active_idx)
     {
-        return active_db[i]->get_hours_complete();
+        return active_db[i].get_hours_complete();
     }
     else
     {
@@ -281,7 +227,7 @@ void DB_Controller::set_hours_deducted_from_index(int i, float deductions)
 {
     if( i > -1 && i < *active_idx)
     {
-        active_db[i]->set_deductions(deductions);
+        active_db[i].set_deductions(deductions);
     }
 }
 
@@ -289,7 +235,7 @@ bool DB_Controller::get_status_from_index(int i)
 {
     if( i > -1 && i < *active_idx)
     {
-        return active_db[i]->get_status();
+        return active_db[i].get_status();
     }
     else
     {
@@ -301,7 +247,7 @@ void DB_Controller::toggle_status_from_index(int i)
 {
     if( i > -1 && i < *active_idx)
     {
-        active_db[ i ]->toggle_status();
+        active_db[ i ].toggle_status();
     }
 }
 
@@ -391,7 +337,7 @@ void DB_Controller::generate_weekly_report(db_gender gen)
     //Fill in the names of the students
     for( idx = 19; idx < ( report_size - 1 ); idx++ )
     {
-        curr_name = ( gen == GUYS ) ? ptr_db_students_male[ stud_idx++ ]->get_name() : ptr_db_students_female[ stud_idx++ ]->get_name();
+        curr_name = ( gen == GUYS ) ? ptr_db_students_male[ stud_idx++ ].get_name() : ptr_db_students_female[ stud_idx++ ].get_name();
         weekly_report[idx] += curr_name;
 
         //Add the space formatting
@@ -410,13 +356,13 @@ void DB_Controller::generate_weekly_report(db_gender gen)
     {
         if( gen == GUYS )
         {
-            curr_time_complete.sprintf("%5.2f", ptr_db_students_male[ stud_idx ]->get_hours_complete());
-            curr_time_required.sprintf("%5.2f", ptr_db_students_male[ stud_idx ]->get_hours_required());
+            curr_time_complete.sprintf("%5.2f", ptr_db_students_male[ stud_idx ].get_hours_complete());
+            curr_time_required.sprintf("%5.2f", ptr_db_students_male[ stud_idx ].get_hours_required());
         }
         else
         {
-            curr_time_complete.sprintf("%5.2f", ptr_db_students_female[ stud_idx ]->get_hours_complete());
-            curr_time_required.sprintf("%5.2f", ptr_db_students_female[ stud_idx ]->get_hours_required());
+            curr_time_complete.sprintf("%5.2f", ptr_db_students_female[ stud_idx ].get_hours_complete());
+            curr_time_required.sprintf("%5.2f", ptr_db_students_female[ stud_idx ].get_hours_required());
         }
 
         stud_idx++;
@@ -439,11 +385,11 @@ void DB_Controller::generate_weekly_report(db_gender gen)
     {
         if( gen == GUYS )
         {
-            fine_amnt = ptr_db_students_male[ stud_idx++ ]->get_hours_incomplete() * guy_fine;
+            fine_amnt = ptr_db_students_male[ stud_idx++ ].get_hours_incomplete() * guy_fine;
         }
         else
         {
-            fine_amnt = ptr_db_students_female[ stud_idx++ ]->get_hours_incomplete() * girl_fine;
+            fine_amnt = ptr_db_students_female[ stud_idx++ ].get_hours_incomplete() * girl_fine;
         }
 
         if( fine_amnt <= 0 )
@@ -478,12 +424,18 @@ void DB_Controller::generate_weekly_report(db_gender gen)
     clear_deductions();
 }
 
+void DB_Controller::save()
+{
+    save_student_data();
+}
+
 /*------------------------------------------------
  *          PRIVATE FUNCTION DEFINITIONS
  * -----------------------------------------------*/
 
 void DB_Controller::initialize_db_controller()
 {
+    bool successfully_loaded = false;
     qDebug("> Fetching settings");
 
     fetch_settings();
@@ -491,7 +443,18 @@ void DB_Controller::initialize_db_controller()
     qDebug("> Settings opened");
     qDebug("> Populating student information...");
 
-    populate_student_information();
+    while( !successfully_loaded )
+    {
+        try
+        {
+            populate_student_information();
+            successfully_loaded = true;
+        }
+        catch( int e )
+        {
+            qDebug("> failed loading students... trying again");
+        }
+    }
 
     qDebug("> Student information loaded");
     qDebug("> Controller booted up");
@@ -511,6 +474,7 @@ void DB_Controller::fetch_settings()
         {
         case 0:
             guy_db = curr_line;
+            //qDebug("> guy database: %s", guy_db.c_str());
             break;
         case 1:
             girl_db = curr_line;
@@ -535,7 +499,7 @@ void DB_Controller::fetch_settings()
 
 }
 
-const char * DB_Controller::compute_db(db_gender gen, database db)
+std::string DB_Controller::compute_db(db_gender gen, database db)
 {
     std::string file_name;
     std::string gen_folder;
@@ -578,7 +542,7 @@ const char * DB_Controller::compute_db(db_gender gen, database db)
 
     }
 
-    //qDebug("%s", (gen_folder + sub_folder + file_name).c_str());
+    //qDebug("> Database path: %s", (gen_folder + sub_folder + file_name).c_str());
     return (gen_folder + sub_folder + file_name).c_str();
 }
 
@@ -591,21 +555,24 @@ void DB_Controller::fill_string_array(db_gender gen, database db)
 {
     std::ifstream reader;
 
-    const char* fname = compute_db(gen, db);
-    reader.open(fname);
+    std::string fname = compute_db(gen, db);
+    qDebug("> database location: %s", fname.c_str());
+    reader.open(fname.c_str());
 
     std::string curr_line;
     int i = 0;
 
     while(std::getline(reader, curr_line))
     {
+        if( i > 499 )
+            break;
         switch(db)
         {
         case NAME:
             student_names[i] = curr_line;
             break;
         case CWID:
-            student_card_numbers[i] = curr_line;
+            student_card_numbers[i] = QString::fromStdString(curr_line);
             break;
         }
         ++i;
@@ -631,8 +598,8 @@ void DB_Controller::fill_string_array(db_gender gen, database db)
 void DB_Controller::fill_float_array(db_gender gen, database db)
 {
     std::ifstream reader;
-    const char* fname = compute_db(gen, db);
-    reader.open(fname);
+    std::string fname = compute_db(gen, db);
+    reader.open(fname.c_str());
 
 
     std::string curr_line;
@@ -641,6 +608,9 @@ void DB_Controller::fill_float_array(db_gender gen, database db)
 
     while(std::getline(reader, curr_line))
     {
+        if( i > 499 )
+            break;
+
         hrs = ::atof(curr_line.c_str());
 
         if( ( hrs < 0 ) || ( hrs > MAX_FLOAT_VAL ) )
@@ -674,24 +644,34 @@ void DB_Controller::write_to_file(db_gender gen, database db)
 
     std::ofstream    writer;
     int              idx;
-    Student          **db_write;
+    Student          *db_write;
     int              count;
 
 
-    const char* fname = compute_db(gen, db);
-    writer.open(fname);
+    std::string fname = compute_db(gen, db);
 
     switch(gen)
     {
     case GUYS:
         db_write = ptr_db_students_male;
         count = male_idx;
+        if( count < 1 )
+        {
+            return;
+        }
+        writer.open(fname.c_str());
         break;
     case GIRLS:
         db_write = ptr_db_students_female;
         count = female_idx;
+        if( count < 1 )
+        {
+            return;
+        }
+        writer.open(fname.c_str());
         break;
     }
+    //qDebug("> set correct database and count for write");
 
     for(idx = 0; idx < count; idx++)
     {
@@ -699,90 +679,93 @@ void DB_Controller::write_to_file(db_gender gen, database db)
         {
         case NAME:
         {
-            writer << db_write[ idx ]->get_name().c_str() << "\n";
+            //qDebug("> writing name from index %d", idx);
+            writer << db_write[ idx ].get_name().c_str() << "\n";
             break;
         }
         case CWID:
         {
-            writer << db_write[ idx ]->get_card_number() << "\n";
+            //qDebug("> writing cwid from index %d", idx);
+            writer << db_write[ idx ].get_card_number() << "\n";
             break;
         }
         case TIME_COMPLETE:
         {
-            writer << db_write[ idx ]->get_hours_complete() << "\n";
+            //qDebug("> writing time complete from index %d", idx);
+            writer << db_write[ idx ].get_hours_complete() << "\n";
             break;
         }
         case TIME_REQUIRED:
         {
-            writer << db_write[ idx ]->get_base_hours() << "\n";
+            //qDebug("> writing time required from index %d", idx);
+            writer << db_write[ idx ].get_base_hours() << "\n";
             break;
         }
         case TIME_DEDUCTED:
         {
-            writer << db_write[ idx ]->get_deductions() << "\n";
+            //qDebug("> writing time deducted from index %d", idx);
+            writer << db_write[ idx ].get_deductions() << "\n";
             break;
         }
         case SETTINGS:
         {
+            //qDebug("> settings write fail!");
             break;
+        }
+        default:
+        {
         }
         }
     }
 
+    //qDebug("> closing writer");
     writer.close();
+    //qDebug("> writer closed");
 }
 
 
 void DB_Controller::populate_student_information()
 {
-    student_names = new std::string[1000];
+    qDebug("> filling guys name array...");
     fill_string_array(GUYS, NAME);
 
-    student_card_numbers = new std::string[male_student_count];
+    qDebug("> Guy count from file: %d", male_student_count);
+
+    qDebug("> filling guys card number array...");
     fill_string_array(GUYS, CWID);
 
-    student_req_hours = new float[male_student_count];
+    qDebug("> filling guys required hours");
     fill_float_array(GUYS, TIME_REQUIRED);
 
-    student_deductions = new float[male_student_count];
+    qDebug("> filling guys deductions");
     fill_float_array(GUYS, TIME_DEDUCTED);
 
-    student_cmplt_hours = new float[male_student_count];
+    qDebug("> filling guys complete hours...");
     fill_float_array(GUYS, TIME_COMPLETE);
 
-    ptr_db_students_male = new Student*[male_student_count];
+    qDebug("> creating male student array... size: %d", male_student_count);
     active_db = ptr_db_students_male;
 
+    qDebug("> populating male student array...");
     populate_student_names(GUYS);
+    qDebug("> male names added");
     populate_student_card_numbers(GUYS);
+    qDebug("> male card numbers added");
     populate_student_required_hours(GUYS);
+    qDebug("> male hours required added");
     populate_student_completed_hours(GUYS);
+    qDebug("> male hours complete added");
     populate_student_deductions(GUYS);
+    qDebug("> male deductions added");
 
     qDebug("> Male information populated");
 
-    delete[] student_names;
-    delete[] student_card_numbers;
-    delete[] student_req_hours;
-    delete[] student_deductions;
-    delete[] student_cmplt_hours;
-
-    student_names = new std::string[1000];
     fill_string_array(GIRLS, NAME);
-
-    student_card_numbers = new std::string[female_student_count];
     fill_string_array(GIRLS, CWID);
-
-    student_req_hours = new float[female_student_count];
     fill_float_array(GIRLS, TIME_REQUIRED);
-
-    student_deductions = new float[female_student_count];
     fill_float_array(GIRLS, TIME_DEDUCTED);
-
-    student_cmplt_hours = new float[female_student_count];
     fill_float_array(GIRLS, TIME_COMPLETE);
 
-    ptr_db_students_female = new Student*[female_student_count];
     active_db = ptr_db_students_female;
 
     populate_student_names(GIRLS);
@@ -791,12 +774,6 @@ void DB_Controller::populate_student_information()
     populate_student_completed_hours(GIRLS);
     populate_student_deductions(GIRLS);
 
-    delete[] student_names;
-    delete[] student_card_numbers;
-    delete[] student_req_hours;
-    delete[] student_deductions;
-    delete[] student_cmplt_hours;
-
     qDebug("> Female information populated");
 }
 
@@ -804,37 +781,47 @@ void DB_Controller::populate_student_information()
 void DB_Controller::populate_student_names(db_gender gen)
 {
     int count;
+    Student *populate_db;
     switch(gen)
     {
     case GUYS:
+        qDebug("> male count: %d", male_student_count);
         count = male_student_count;
+        populate_db = ptr_db_students_male;
         break;
     case GIRLS:
         count = female_student_count;
+        populate_db = ptr_db_students_female;
         break;
     }
 
     for(int i = 0; i < count; i++)
     {
-        active_db[i] = new Student(student_names[i]);
+        qDebug("> index: %d", i);
+        active_db[i].set_name(student_names[i]);
     }
 }
 
 void DB_Controller::populate_student_card_numbers(db_gender gen)
 {
     int count;
+    Student *populate_db;
     switch(gen)
     {
     case GUYS:
+        qDebug("> male count: %d", male_student_count);
         count = male_student_count;
+        populate_db = ptr_db_students_male;
         break;
     case GIRLS:
         count = female_student_count;
+        populate_db = ptr_db_students_female;
         break;
     }
     for(int i = 0; i < count; i++)
     {
-        active_db[i]->set_card_number(student_card_numbers[i]);
+        qDebug("> index: %d", i);
+        active_db[i].set_card_number(student_card_numbers[i]);
     }
 }
 
@@ -853,7 +840,9 @@ void DB_Controller::populate_student_required_hours(db_gender gen)
 
     for(int i = 0; i < count; i++)
     {
-        active_db[i]->set_hours_required(student_req_hours[i]);
+        active_db[i].set_hours_day_total(0.0);
+        active_db[i].set_status(false);
+        active_db[i].set_hours_required(student_req_hours[i]);
     }
 }
 
@@ -872,7 +861,7 @@ void DB_Controller::populate_student_completed_hours(db_gender gen)
 
     for(int i = 0; i < count; i++)
     {
-        active_db[i]->set_hours_complete(student_cmplt_hours[i]);
+        active_db[i].set_hours_complete(student_cmplt_hours[i]);
     }
 }
 
@@ -891,7 +880,7 @@ void DB_Controller::populate_student_deductions(db_gender gen)
 
     for( int i = 0; i < count; i++ )
     {
-        active_db[i]->set_deductions(student_deductions[i]);
+        active_db[i].set_deductions(student_deductions[i]);
     }
 }
 
@@ -909,36 +898,6 @@ void DB_Controller::sort_db(DB_Sort::sort_by type, db_gender gen)
     }
 }
 
-void DB_Controller::resize_db()
-{
-    int idx;
-
-    Student **ptr_temp = new Student*[*active_idx + 50];
-
-    for( idx = 0; idx < *active_idx; idx++ )
-    {
-        ptr_temp[ idx ] = active_db[ idx ];
-    }
-
-    if( active_db == ptr_db_students_male)
-    {
-        delete[] ptr_db_students_male;
-
-        ptr_db_students_male = ptr_temp;
-        active_db = ptr_db_students_male;
-    }
-    else if( active_db == ptr_db_students_female)
-    {
-        delete[] ptr_db_students_female;
-
-        ptr_db_students_female = ptr_temp;
-        active_db = ptr_db_students_female;
-    }
-    *active_count += 50;
-
-    qDebug("> %s database resized: new size - %d", active_db == ptr_db_students_male ? "Male" : "Female", *active_count);
-}
-
 void DB_Controller::clock_out_all()
 {
     if( !is_active )
@@ -948,13 +907,13 @@ void DB_Controller::clock_out_all()
 
     for( idx = 0; idx < male_idx ; idx++ )
     {
-        ptr_db_students_male[ idx ]->clock_out();
+        ptr_db_students_male[ idx ].clock_out();
     }
     qDebug("> Male students clocked out");
 
     for( idx = 0; idx < female_idx ; idx++ )
     {
-        ptr_db_students_female[ idx ]->clock_in();
+        ptr_db_students_female[ idx ].clock_in();
     }
     qDebug("> Female students clocked out");
 }
@@ -965,7 +924,7 @@ void DB_Controller::save_student_data()
     sort_db(DB_Sort::L_NAME, DB_Controller::GIRLS);
 
     int   db;
-    char* info;
+    std::string info;
 
     for( db = NAME; db < DB_COUNT; db++ )
     {
@@ -983,16 +942,26 @@ void DB_Controller::save_student_data()
         case TIME_REQUIRED:
             info = "hours required";
             break;
+        case TIME_DEDUCTED:
+            info = "hours deducted";
+            break;
         default:
             info = "unknown data";
             break;
         }
 
-        qDebug("> Saving male %s data...", info);
-        write_to_file( GUYS, (DB_Controller::database)db );
 
-        qDebug("> Saving female %s data", info);
-        write_to_file( GIRLS, (DB_Controller::database)db );
+        if( male_idx > 0 )
+        {
+            //qDebug("> Saving male %s data...", info.c_str());
+            write_to_file( GUYS, (DB_Controller::database)db );
+        }
+
+        if( female_idx > 0 )
+        {
+            //qDebug("> Saving female %s data", info.c_str());
+            write_to_file( GIRLS, (DB_Controller::database)db );
+        }
     }
 }
 
@@ -1004,14 +973,14 @@ void DB_Controller::clear_deductions()
 
     for( idx = 0; idx < male_idx; idx++)
     {
-        ptr_db_students_male[idx]->set_deductions( 0 );
+        ptr_db_students_male[idx].set_deductions( 0 );
     }
 
     qDebug("> Male deductions cleared");
 
     for( idx = 0; idx < female_idx; idx++ )
     {
-        ptr_db_students_female[idx]->set_deductions( 0 );
+        ptr_db_students_female[idx].set_deductions( 0 );
     }
 
     qDebug("> Female deductions cleared");

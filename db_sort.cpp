@@ -1,11 +1,11 @@
 #include "db_sort.h"
 
-void DB_Sort::sort(Student **s_ptr, int student_count, sort_by attribute)
+void DB_Sort::sort(Student *s_ptr, int student_count, sort_by attribute)
 {
     sort(s_ptr, attribute, 0, student_count - 1);
 }
 
-void DB_Sort::sort(Student **s_ptr, sort_by attribute, int low, int high)
+void DB_Sort::sort(Student *s_ptr, sort_by attribute, int low, int high)
 {
     if (high <= low)
         return;                                 //if done, exit
@@ -43,7 +43,7 @@ void DB_Sort::sort(Student **s_ptr, sort_by attribute, int low, int high)
 
 }
 
-int DB_Sort::partition_by_f_name(Student **s_ptr, int low, int high)
+int DB_Sort::partition_by_f_name(Student *s_ptr, int low, int high)
 {
     //partitions into s_ptr[low ... i-1], s_ptr[j], and a[i+1 ... high]
 
@@ -51,16 +51,16 @@ int DB_Sort::partition_by_f_name(Student **s_ptr, int low, int high)
     int i = low;                                 //left scan index
     int j = high + 1;                            //right scan index
 
-    Student *v = s_ptr[low];                     //partitioning item
-    Student *temp;
+    Student v = s_ptr[low];                     //partitioning item
+    Student temp;
 
     while (true)
     {
         //Scan right, scan left, check for scan complete, and exchange
 
-        while( compare_names(s_ptr[++i]->get_first_name(), v->get_first_name()) )
+        while( compare_names(s_ptr[++i].get_first_name(), v.get_first_name()) )
             if( i == high )  break;
-        while( compare_names( v->get_first_name(), s_ptr[--j]->get_first_name() ) )
+        while( compare_names( v.get_first_name(), s_ptr[--j].get_first_name() ) )
             if( j == low)    break;
         if( i >= j )  break;
 
@@ -75,7 +75,7 @@ int DB_Sort::partition_by_f_name(Student **s_ptr, int low, int high)
     return j;
 }
 
-int DB_Sort::partition_by_l_name(Student **s_ptr, int low, int high)
+int DB_Sort::partition_by_l_name(Student *s_ptr, int low, int high)
 {
     //partitions into s_ptr[low ... i-1], s_ptr[j], and a[i+1 ... high]
 
@@ -83,16 +83,16 @@ int DB_Sort::partition_by_l_name(Student **s_ptr, int low, int high)
     int i = low;                                 //left scan index
     int j = high + 1;                            //right scan index
                                   //name iterator
-    Student *v = s_ptr[low];                     //partitioning item
-    Student *temp;
+    Student v = s_ptr[low];                     //partitioning item
+    Student temp;
 
     while (true)
     {
         //Scan right, scan left, check for scan complete, and exchange
 
-        while( compare_names(s_ptr[++i]->get_last_name(), v->get_last_name()) )
+        while( compare_names(s_ptr[++i].get_last_name(), v.get_last_name()) )
             if( i == high )  break;
-        while( compare_names( v->get_last_name(), s_ptr[--j]->get_last_name() ) )
+        while( compare_names( v.get_last_name(), s_ptr[--j].get_last_name() ) )
             if( j == low)    break;
         if( i >= j )  break;
 
@@ -107,20 +107,20 @@ int DB_Sort::partition_by_l_name(Student **s_ptr, int low, int high)
     return j;
 }
 
-int DB_Sort::partition_by_hours_complete(Student **s_ptr, int low, int high)
+int DB_Sort::partition_by_hours_complete(Student *s_ptr, int low, int high)
 {
     //partitions into s_ptr[low ... i-1], s_ptr[j], and a[i+1 ... high]
 
     int i = low;                                //left scan index
     int j = high + 1;                           //right scan index
-    Student *v = s_ptr[low];                    //partitioning item
-    Student *temp;
+    Student v = s_ptr[low];                    //partitioning item
+    Student temp;
 
     while (true)
     {
-        while( s_ptr[++i]->get_hours_complete() > v->get_hours_complete() )
+        while( s_ptr[++i].get_hours_complete() > v.get_hours_complete() )
             if ( i == high )  break;
-        while( v->get_hours_complete() > s_ptr[--j]->get_hours_complete() )
+        while( v.get_hours_complete() > s_ptr[--j].get_hours_complete() )
             if ( j == low )   break;
         if ( i >= j ) break;
 
@@ -135,21 +135,21 @@ int DB_Sort::partition_by_hours_complete(Student **s_ptr, int low, int high)
     return j;
 }
 
-int DB_Sort::partition_by_hours_required(Student **s_ptr, int low, int high)
+int DB_Sort::partition_by_hours_required(Student *s_ptr, int low, int high)
 {
     //partitions into s_ptr[low ... i-1], s_ptr[j], and a[i+1 ... high]
 
 
     int i = low;                                //left scan index
     int j = high + 1;                           //right scan index
-    Student *v = s_ptr[low];                    //partitioning item
-    Student *temp;
+    Student v = s_ptr[low];                    //partitioning item
+    Student temp;
 
     while (true)
     {
-        while(s_ptr[++i]->get_hours_required() < v->get_hours_required())
+        while(s_ptr[++i].get_hours_required() < v.get_hours_required())
             if (i == high)  break;
-        while(v->get_hours_required() < s_ptr[--j]->get_hours_required())
+        while(v.get_hours_required() < s_ptr[--j].get_hours_required())
             if ( j == low )   break;
         if ( i >= j ) break;
 
@@ -164,21 +164,21 @@ int DB_Sort::partition_by_hours_required(Student **s_ptr, int low, int high)
     return j;
 }
 
-int DB_Sort::partition_by_hours_incomplete(Student **s_ptr, int low, int high)
+int DB_Sort::partition_by_hours_incomplete(Student *s_ptr, int low, int high)
 {
     //partitions into s_ptr[low ... i-1], s_ptr[j], and a[i+1 ... high]
 
 
     int i = low;                                //left scan index
     int j = high + 1;                           //right scan index
-    Student *v = s_ptr[low];                    //partitioning item
-    Student *temp;
+    Student v = s_ptr[low];                    //partitioning item
+    Student temp;
 
     while (true)
     {
-        while(s_ptr[++i]->get_hours_incomplete() > v->get_hours_incomplete())
+        while(s_ptr[++i].get_hours_incomplete() > v.get_hours_incomplete())
             if (i == high)  break;
-        while(v->get_hours_incomplete() > s_ptr[--j]->get_hours_incomplete())
+        while(v.get_hours_incomplete() > s_ptr[--j].get_hours_incomplete())
             if ( j == low )   break;
         if ( i >= j ) break;
 
@@ -193,20 +193,20 @@ int DB_Sort::partition_by_hours_incomplete(Student **s_ptr, int low, int high)
     return j;
 }
 
-int DB_Sort::partition_by_status(Student **s_ptr, int low, int high)
+int DB_Sort::partition_by_status(Student *s_ptr, int low, int high)
 {
     //partitions into s_ptr[low ... i-1], s_ptr[j], and a[i+1 ... high]
 
     int i = low;                                //left scan index
     int j = high + 1;                           //right scan index
-    Student *v = s_ptr[low];                    //partitioning item
-    Student *temp;
+    Student v = s_ptr[low];                    //partitioning item
+    Student temp;
 
     while (true)
     {
-        while(s_ptr[++i]->get_status() > v->get_status())
+        while(s_ptr[++i].get_status() > v.get_status())
             if (i == high)  break;
-        while(v->get_status() > s_ptr[--j]->get_status())
+        while(v.get_status() > s_ptr[--j].get_status())
             if ( j == low )   break;
         if ( i >= j ) break;
 
@@ -221,16 +221,25 @@ int DB_Sort::partition_by_status(Student **s_ptr, int low, int high)
     return j;
 }
 
-bool DB_Sort::compare_names(const char *s1, const char *s2)
+bool DB_Sort::compare_names(const std::string s1, const std::string s2)
 {
 
     int i;
 
-    for( i = 0; i < get_shortest_length(s1, s2); i++)
+    char st_1[s1.size() + 1];
+    char st_2[s2.size() + 1];
+
+    st_1[s1.size()] = '\0';
+    st_2[s2.size()] = '\0';
+
+    memcpy(st_1, s1.c_str(), s1.size());
+    memcpy(st_2, s2.c_str(), s2.size());
+
+    for( i = 0; i < get_shortest_length(st_1, st_2); i++)
     {
-        if( s1[i] > s2[i] )
+        if( st_1[i] > st_2[i] )
             return false;
-        else if( s1[i] < s2[i] )
+        else if( st_1[i] < st_2[i] )
             return true;
     }
 

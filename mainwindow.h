@@ -62,6 +62,8 @@ private slots:
 
     void on_btn_generate_report_clicked();
 
+    void on_btn_save_data_clicked();
+
 private:
     //Database Controller
     DB_Controller *controller;

@@ -29,8 +29,6 @@
  *
  * ---------------------------------------------*/
 
-char * curr_path;
-
 static bool f_exists(const char *fileName);
 
 int main(int argc, char *argv[])

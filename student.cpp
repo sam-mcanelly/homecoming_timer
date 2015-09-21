@@ -206,6 +206,7 @@ float Student::get_hours_day_total() const
 void Student::set_hours_complete(float new_hours_complete)
 {
     hours_complete = new_hours_complete;
+    hours_day_total  =  0;
 }
 
 void Student::increment_hours_complete(float addition)

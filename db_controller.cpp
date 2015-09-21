@@ -123,7 +123,14 @@ void DB_Controller::add_student(std::string name, QString card_num, float hours_
 
 void DB_Controller::delete_student(int index)
 {
+    int idx;
 
+    for( idx = index; idx < ( *active_idx - 1 ); idx++ )
+    {
+        active_db[ idx ] = active_db[ idx + 1 ];
+    }
+
+    (*active_idx)--;
 }
 
 int DB_Controller::search_name(std::string name)
@@ -285,7 +292,7 @@ void DB_Controller::generate_weekly_report(db_gender gen)
     end                = QDate::currentDate();
     end_date           = QDate::currentDate().toString();
     begin_date         = end.addDays( (qint64)(-7) ).toString();
-    output_file        = report_path + ( ( gen == GUYS ) ? frat_name : sor_name ) + "/" + ( ( gen == GUYS ) ? frat_name : sor_name ) + "_week_" + "_" + begin_date.toStdString() + "_to_" + end_date.toStdString();
+    output_file        = report_path + ( ( gen == GUYS ) ? frat_name : sor_name ) + "\\" + ( ( gen == GUYS ) ? frat_name : sor_name ) + "_week_" + "_" + begin_date.toStdString() + "_to_" + end_date.toStdString();
     date               = begin_date.toStdString() + " - " + end_date.toStdString();
     fine               = ( gen == GUYS ) ? QString::number(guy_fine) : QString::number(girl_fine);
     stud_idx           = 0;
@@ -414,14 +421,24 @@ void DB_Controller::generate_weekly_report(db_gender gen)
 
     weekly_report[ report_size - 1 ] = weekly_report_header[ 20 ];
 
-    for(int i = 0; i < ( report_size ); i++)
+    for( idx = 0; idx < ( report_size ); idx++)
     {
-        qDebug("%s", weekly_report[i].c_str());
+        qDebug("%s", weekly_report[idx].c_str());
     }
 
     write_report(output_file.c_str(), weekly_report, report_size);
 
     clear_deductions();
+
+    for( idx = 0; idx < female_idx; idx++)
+    {
+        ptr_db_students_female[idx].set_hours_complete( 0.0 );
+    }
+
+    for( idx = 0; idx < male_idx; idx++ )
+    {
+        ptr_db_students_male[idx].set_hours_complete( 0.0 );
+    }
 }
 
 void DB_Controller::save()

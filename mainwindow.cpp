@@ -323,7 +323,7 @@ void MainWindow::on_btn_add_clicked()
         return;
     }
 
-    if( ui->txt_add_card->text().length() < 10 )
+    if( ui->txt_add_card->text().length() < 20 )
     {
         QMessageBox box;
         box.setText("Invalid card number!");
@@ -475,6 +475,8 @@ void MainWindow::on_btn_generate_report_clicked()
     controller->generate_weekly_report(DB_Controller::GUYS);
     qDebug("Generating female report...");
     controller->generate_weekly_report(DB_Controller::GIRLS);
+
+    refresh_student_lists();
 }
 
 void MainWindow::on_btn_save_data_clicked()

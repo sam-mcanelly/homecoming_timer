@@ -109,7 +109,6 @@ void DB_Controller::add_student(std::string name, QString card_num, float hours_
     {
         return;
     }
-    qDebug("> FUCKING ACTIVE_IDX BITCH: %d", *active_idx);
     active_db[ (*active_idx) ].set_name(name);
     active_db[ (*active_idx) ].set_card_number(card_num);
     active_db[ (*active_idx) ].set_deductions(0.0);
@@ -430,14 +429,19 @@ void DB_Controller::generate_weekly_report(db_gender gen)
 
     clear_deductions();
 
-    for( idx = 0; idx < female_idx; idx++)
+    if( gen == GIRLS )
     {
-        ptr_db_students_female[idx].set_hours_complete( 0.0 );
+        for( idx = 0; idx < female_idx; idx++)
+        {
+            ptr_db_students_female[idx].set_hours_complete( 0.0 );
+        }
     }
-
-    for( idx = 0; idx < male_idx; idx++ )
+    else
     {
-        ptr_db_students_male[idx].set_hours_complete( 0.0 );
+        for( idx = 0; idx < male_idx; idx++ )
+        {
+            ptr_db_students_male[idx].set_hours_complete( 0.0 );
+        }
     }
 }
 

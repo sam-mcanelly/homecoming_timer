@@ -307,6 +307,8 @@ void MainWindow::on_combo_db_selection_currentIndexChanged(int index)
 
 void MainWindow::on_btn_add_clicked()
 {
+    int index;
+
     if(!init)
     {
         QMessageBox box;
@@ -323,10 +325,28 @@ void MainWindow::on_btn_add_clicked()
         return;
     }
 
-    if( ui->txt_add_card->text().length() < 20 )
+    /*if( ui->txt_add_card->text().length() < 117 || ui->txt_add_card->text().length() > 117 )
     {
         QMessageBox box;
         box.setText("Invalid card number!");
+        box.exec();
+        return;
+    }*/
+
+    index = controller->search_card_number(ui->txt_add_card->text().toUtf8().constData());
+    if( index != -1 )
+    {
+        QMessageBox box;
+        box.setText("This person has already been added! Dumbass...");
+        box.exec();
+        return;
+    }
+
+    index = controller->search_name(ui->txt_add_name->text().toUtf8().constData());
+    if( index != -1 )
+    {
+        QMessageBox box;
+        box.setText("This person has already been added! Dumbass...");
         box.exec();
         return;
     }
